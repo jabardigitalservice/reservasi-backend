@@ -59,12 +59,65 @@ class AsetResourceController extends Controller
             $aset->save();
             DB::commit();
 
-            return $this->respondPayload(true, 'Berhasil', $aset);
+            return $this->respondPayload(true, 'Aset has been succefully added.', $aset);
 
         } catch (\Throwable $th) {
             DB::rollback();
 
-            return $this->respondPayload(false, 'Gagal', null);
+            return $this->respondPayload(false, 'Error while adding record.', null);
         }
+    }
+
+    /**
+     * Updated a existing resource in storage.
+     * @author SedekahCode
+     * @since Januari 2021
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id) {
+        // check exist or not
+        $asetExists = AsetResource::find($id);
+        if (!$asetExists) { 
+            return $this->respondPayload(false, 'Aset with id '. $id .' is not exists.', null); 
+        }
+
+        // start to update a record
+        DB::beginTransaction();
+        try {
+            $aset = $asetExists->fill($request->all())->save();
+            DB::commit();
+
+            return $this->respondPayload(true, 'Aset has been succefully updated.', $asetExists);
+
+        } catch (\Throwable $th) {
+            DB::rollback();
+
+            return $this->respondPayload(false, 'Error while updating record.', null);
+        }
+    }
+
+    /**
+     * Get all data from storage
+     * @author SedekahCode
+     * @since Januari 2021
+     */
+    public function getAll() {
+        return $this->respondPayload(true, 'Data aset was found', AsetResource::all());
+    }
+
+    /**
+     * Get all data from storage
+     * @author SedekahCode
+     * @since Januari 2021
+     */
+    public function getById($id) {
+        // check exist or not
+        $asetExists = AsetResource::find($id);
+        if (!$asetExists) { 
+            return $this->respondPayload(false, 'Aset with id '. $id .' is not exists.', null); 
+        }
+        
+        return $this->respondPayload(true, 'Data aset was found', $asetExists);
     }
 }
