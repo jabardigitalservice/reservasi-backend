@@ -28,7 +28,7 @@ class ReservationController extends Controller
         }
 
         //filter
-        $this->filter($request, $records);
+        $this->filterList($request, $records);
 
         //order
         $records->orderBy($sortBy, $sortOrder);
@@ -91,7 +91,7 @@ class ReservationController extends Controller
         return 15;
     }
 
-    protected function filter(Request $request, $records)
+    protected function filterList(Request $request, $records)
     {
         if ($request->has('created_at')) {
             $records->whereDate('created_at', date('Y-m-d'));

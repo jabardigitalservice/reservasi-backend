@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\ReservationStatus;
 use App\Enums\UserRole;
+use App\Models\Reservation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AcceptReservation extends FormRequest
@@ -25,10 +26,10 @@ class AcceptReservation extends FormRequest
      */
     public function rules()
     {
-        $already_approved = ReservationStatus::ALREADY_APPROVED();
-        $rejected = ReservationStatus::REJECTED();
+        $alreadyApproved = strtolower(Reservation::ALREADY_APPROVED);
+        $rejected = strtolower(Reservation::REJECTED);
         return [
-            'approval_status' => "required|in:$already_approved,$rejected",
+            'approval_status' => "required|in:$alreadyApproved,$rejected",
             'note' => 'required'
         ];
     }
