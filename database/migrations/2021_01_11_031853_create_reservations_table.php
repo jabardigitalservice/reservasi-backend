@@ -15,11 +15,7 @@ class CreateReservationsTable extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id_reservation')
-                ->nullable()
-                ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('set null');
+            $table->uuid('user_id_reservation');
             $table->string('username');
             $table->string('reservation_title');
             $table->string('reservation_description')->nullable();
@@ -37,16 +33,8 @@ class CreateReservationsTable extends Migration
                 ->default('not_yet_approved');
             $table->dateTime('approval_date')
                 ->nullable();
-            $table->foreignId('user_id_updated')
-                ->nullable()
-                ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('set null');
-            $table->foreignId('user_id_deleted')
-                ->nullable()
-                ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('set null');
+            $table->uuid('user_id_updated');
+            $table->uuid('user_id_deleted');
             $table->softDeletes();
             $table->index(['reservation_title', 'asset_name' , 'username']);
             $table->timestamps();

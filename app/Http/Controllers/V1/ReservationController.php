@@ -82,6 +82,7 @@ class ReservationController extends Controller
     {
         $reservation->approval_status = $request->approval_status;
         $reservation->note = $request->note;
+        $reservation->approval_date = $request->note;
         $reservation->save();
         return new ReservationResource($reservation);
     }
