@@ -15,7 +15,7 @@ class AcceptReservation extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->role == UserRole::ADMIN()->getValue();
+        return $this->user()->role == UserRole::ADMIN();
     }
 
     /**

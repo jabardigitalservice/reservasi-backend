@@ -17,6 +17,6 @@ class Reservation extends Model
 
     public function getSomeDateAttribute($date)
     {
-        return $date->format('Y M D H:i:s');
+        return $date->format('Y-m-d H:i:s');
     }
 }

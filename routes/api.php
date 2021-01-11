@@ -22,6 +22,6 @@ Route::group(['prefix' => 'reservation'], function () {
     Route::get('/', 'ReservationController@index');
     Route::post('store', 'ReservationController@store');
     Route::put('accept/{reservation}', 'ReservationController@accept');
-    Route::delete('delete', 'ReservationController@delete');
-    Route::get('show/{id}', 'ReservationController@show');
+    Route::delete('delete/{reservation}', 'ReservationController@delete');
+    Route::get('show/{reservation}', 'ReservationController@show');
 });

@@ -12,7 +12,6 @@ final class UserRole extends Enum
     }
     public static function ADMIN(): string
     {
-
         return 'admin';
     }
 }
