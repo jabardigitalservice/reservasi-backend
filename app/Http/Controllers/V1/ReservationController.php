@@ -10,7 +10,6 @@ use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
 {
@@ -23,10 +22,14 @@ class ReservationController extends Controller
         $sortOrder = $request->get('sort_order', 'desc');
         $perPage = $request->input('per_page', 15);
 
+        $perPage = $this->getPaginationSize($perPage);
+
+        //search
         if ($search) {
             $records->where('title', 'like', '%' . $search . '%');
         }
 
+        //filter
         if ($request->has('date')) {
             $records->whereDate('created_at', date('Y-m-d'));
         } elseif ($request->has('approval_status')) {
@@ -35,9 +38,13 @@ class ReservationController extends Controller
             $records->where('created_at', '>=', $request->get('reservation_start'));
         } elseif ($request->has('reservation_end')) {
             $records->where('created_at', '>=', $request->get('reservation_end'));
-        } elseif ($sortBy == 'date') {
+        }
+
+        //order
+        if ($sortBy == 'date') {
             $sortBy = 'created_at';
         }
+
         $records->orderBy($sortBy, $sortOrder);
 
         //check role employee
@@ -54,67 +61,50 @@ class ReservationController extends Controller
 
     public function store(StoreReservation $request)
     {
-        DB::beginTransaction();
-        try {
-            $asset = Asset::find($request->asset_id);
-            $user = $request->user();
-            Reservation::create([
-                'user_id_reservation' => $user->id,
-                'username' => $user->username,
-                'reservation_title' => $request->reservation_title,
-                'reservation_description' => $request->reservation_description,
-                'asset_id' => $request->asset_id,
-                'asset_name' => $asset->asset_name,
-                'asset_description' => $asset->asset_description,
-                'reservation_start' => $request->reservation_start,
-                'reservation_end' => $request->reservation_end,
-            ]);
-            DB::commit();
-            return response()->json(['code' => 200, 'message' => 'success'], 200);
-        } catch (\Throwable $th) {
-            DB::rollback();
-            return response()->json(['code' => 500, 'message' => 'error'], 500);
-        }
+        $asset = Asset::find($request->asset_id);
+        $user = $request->user();
+        $reservation = Reservation::create([
+            'user_id_reservation' => $user->id,
+            'username' => $user->username,
+            'reservation_title' => $request->reservation_title,
+            'reservation_description' => $request->reservation_description,
+            'asset_id' => $request->asset_id,
+            'asset_name' => $asset->asset_name,
+            'asset_description' => $asset->asset_description,
+            'reservation_start' => $request->reservation_start,
+            'reservation_end' => $request->reservation_end,
+        ]);
+
+        return ReservationResource::collection($reservation);
     }
 
-    public function accept(AcceptReservation $request, $id)
+    public function accept(AcceptReservation $request, Reservation $reservation)
     {
-        DB::beginTransaction();
-        try {
-            $reservation = Reservation::findOrFail($id);
-            $reservation->approval_status = $request->approval_status;
-            $reservation->note = $request->note;
-            $reservation->save();
-            DB::commit();
-            return response()->json(['code' => 200, 'message' => 'success'], 200);
-        } catch (\Throwable $th) {
-            DB::rollback();
-            return response()->json(['code' => 500, 'message' => 'error'], 500);
-        }
+        $reservation->approval_status = $request->approval_status;
+        $reservation->note = $request->note;
+        $reservation->save();
+        return new ReservationResource($reservation);
     }
 
-    public function delete($id)
+    public function delete(Reservation $reservation)
     {
-        DB::beginTransaction();
-        try {
-            $reservation = Reservation::findOrFail($id);
-            abort_if($reservation->approval_status != 'not_yet_approved', 500, 'error');
-            $reservation->delete();
-            DB::commit();
-            return response()->json(['code' => 200, 'message' => 'success'], 200);
-        } catch (\Throwable $th) {
-            DB::rollback();
-            return response()->json(['code' => 500, 'message' => 'error'], 500);
-        }
+        abort_if($reservation->approval_status != 'not_yet_approved', 500, 'error');
+        $reservation->delete();
+        return response()->json(['message' => 'DELETED']);
     }
 
-    public function show($id)
+    public function show(Reservation $reservation)
     {
-        try {
-            $reservation = Reservation::findOrFail($id);
-            return response()->json(['code' => 200, 'result' => $reservation], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['code' => 500, 'message' => 'error'], 500);
+        return new ReservationResource($reservation);
+    }
+
+    protected function getPaginationSize($perPage)
+    {
+        $perPageAllowed = [50, 100, 500];
+
+        if (in_array($perPage, $perPageAllowed)) {
+            return $perPage;
         }
+        return 15;
     }
 }

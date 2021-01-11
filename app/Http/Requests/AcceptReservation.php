@@ -25,8 +25,8 @@ class AcceptReservation extends FormRequest
      */
     public function rules()
     {
-        $already_approved = ReservationStatus::ALREADY_APPROVED()->getValue();
-        $rejected = ReservationStatus::REJECTED()->getValue();
+        $already_approved = ReservationStatus::ALREADY_APPROVED();
+        $rejected = ReservationStatus::REJECTED();
         return [
             'approval_status' => "required|in:$already_approved,$rejected",
             'note' => 'required'
