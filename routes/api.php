@@ -24,3 +24,4 @@ Route::post('aset', 'AsetResourceController@store');
 Route::put('aset/{id}', 'AsetResourceController@update');
 Route::get('aset', 'AsetResourceController@getAll');
 Route::get('aset/{id}', 'AsetResourceController@getById');
+Route::get('search', 'AsetResourceController@searchByNameAndStatus');

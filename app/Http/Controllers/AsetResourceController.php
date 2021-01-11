@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Validator;
@@ -119,5 +120,26 @@ class AsetResourceController extends Controller
         }
         
         return $this->respondPayload(true, 'Data aset was found', $asetExists);
+    }
+
+    /**
+     * Endpoint to search data based on nama
+     * @author SedekahCode
+     * 
+     */
+    public function searchByNameAndStatus(Request $request) {
+        if ($request->has(['name', 'status'])) {
+            $aset = AsetResource::where('name', 'LIKE', '%' . $request->name . '%' )->where('status', 'LIKE', '%' . $request->status . '%' )->get();
+        } elseif ($request->has('name')) {
+            $aset = AsetResource::where('name', 'LIKE', '%' . $request->name . '%' )->get();
+        } else {
+            $aset = AsetResource::where('status', 'LIKE', '%' . $request->status . '%' )->get();
+        }
+ 
+        if (count ( $aset ) > 0) {
+            return $this->respondPayload(true, 'Data was found', $aset);
+        } else {
+            return $this->respondPayload(true, 'No data found. Try to search again', null);
+        }
     }
 }
