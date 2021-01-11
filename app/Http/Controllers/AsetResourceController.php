@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use Validator;
+use App\Http\Requests\StoreAsetRequest;
+use App\Http\Requests\EditAsetRequest;
 use App\AsetResource;
 
 class AsetResourceController extends Controller
@@ -18,15 +16,14 @@ class AsetResourceController extends Controller
      * @param trueOrFalse bool
      * @param message string
      * @param data object
-     * @return JSON
+     * @return JsonResponse
      */
-    private function respondPayload($trueOrFalse, $message, $data) {
+    private function respondPayload($message, $data, $statusCode) {
         $res = response([
-            'success' => $trueOrFalse,
             'message' => $message,
             'data' => $data
         ],
-        $trueOrFalse === true ? 200 : 500);
+        $statusCode);
 
         return $res;
     }
@@ -38,35 +35,11 @@ class AsetResourceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreAsetRequest $request)
     {
-        // validation req body
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'status' => 'required|in:aktif, tidak aktif',
-            'description' => 'required'
-        ]);
-        if ($validator->fails()) {    
-            return response()->json($validator->messages(), 200);
-        }
+        $result = AsetResource::create($request->all());
 
-        // start to create new record
-        DB::beginTransaction();
-        try {
-            $aset = new AsetResource();
-            $aset->name = $request->name;
-            $aset->status = $request->status;
-            $aset->description = $request->description;
-            $aset->save();
-            DB::commit();
-
-            return $this->respondPayload(true, 'Aset has been succefully added.', $aset);
-
-        } catch (\Throwable $th) {
-            DB::rollback();
-
-            return $this->respondPayload(false, 'Error while adding record.', null);
-        }
+        return $this->respondPayload('Aset record created.', $result, 201);
     }
 
     /**
@@ -76,26 +49,15 @@ class AsetResourceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) {
+    public function update(EditAsetRequest $request, $id) {
         // check exist or not
         $asetExists = AsetResource::find($id);
         if (!$asetExists) { 
-            return $this->respondPayload(false, 'Aset with id '. $id .' is not exists.', null); 
+            return $this->respondPayload('Aset record with id '. $id .' is not exists.', null, 404); 
         }
+        $asetExists->fill($request->all())->save();
 
-        // start to update a record
-        DB::beginTransaction();
-        try {
-            $aset = $asetExists->fill($request->all())->save();
-            DB::commit();
-
-            return $this->respondPayload(true, 'Aset has been succefully updated.', $asetExists);
-
-        } catch (\Throwable $th) {
-            DB::rollback();
-
-            return $this->respondPayload(false, 'Error while updating record.', null);
-        }
+        return $this->respondPayload('Aset record updated.', $asetExists, 200);
     }
 
     /**
@@ -104,7 +66,7 @@ class AsetResourceController extends Controller
      * @since Januari 2021
      */
     public function getAll() {
-        return $this->respondPayload(true, 'Data aset was found', AsetResource::all());
+        return $this->respondPayload('Data aset found', AsetResource::all(), 200);
     }
 
     /**
@@ -116,10 +78,21 @@ class AsetResourceController extends Controller
         // check exist or not
         $asetExists = AsetResource::find($id);
         if (!$asetExists) { 
-            return $this->respondPayload(false, 'Aset with id '. $id .' is not exists.', null); 
+            return $this->respondPayload('Aset record with id '. $id .' is not exists.', null, 404); 
         }
         
-        return $this->respondPayload(true, 'Data aset was found', $asetExists);
+        return $this->respondPayload('Data aset found', $asetExists, 200);
+    }
+
+    public function destroy($id) {
+        // check exist or not
+        $asetExists = AsetResource::find($id);
+        if (!$asetExists) { 
+            return $this->respondPayload('Aset record with id '. $id .' is not exists.', null, 404); 
+        }
+        $asetExists->delete();
+
+        return $this->respondPayload('Aset record deleted.', null, 200);
     }
 
     /**
@@ -137,9 +110,9 @@ class AsetResourceController extends Controller
         }
  
         if (count ( $aset ) > 0) {
-            return $this->respondPayload(true, 'Data was found', $aset);
+            return $this->respondPayload('Data aset found.', $aset, 200);
         } else {
-            return $this->respondPayload(true, 'No data found. Try to search again', null);
+            return $this->respondPayload('No data found. Try to search again.', null, 404);
         }
     }
 }

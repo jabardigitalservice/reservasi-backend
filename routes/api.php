@@ -21,7 +21,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 //---ROUTE FOR ASET---//
 Route::post('aset', 'AsetResourceController@store');
-Route::put('aset/{id}', 'AsetResourceController@update');
+Route::put('aset/{idAset}', 'AsetResourceController@update');
 Route::get('aset', 'AsetResourceController@getAll');
-Route::get('aset/{id}', 'AsetResourceController@getById');
+Route::get('aset/{idAset}', 'AsetResourceController@getById');
+Route::delete('aset/{idAset}', 'AsetResourceController@destroy');
 Route::get('search', 'AsetResourceController@searchByNameAndStatus');
