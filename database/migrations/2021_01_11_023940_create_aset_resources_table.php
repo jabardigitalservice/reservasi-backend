@@ -18,12 +18,7 @@ class CreateAsetResourcesTable extends Migration
             $table->string('name');
             $table->enum('status', ['aktif', 'tidak aktif']);
             $table->string('description');
-            $table->dateTime('createdAt')->nullable();
-            $table->integer('createdBy')->nullable();
-            $table->dateTime('updatedAt')->nullable();
-            $table->integer('updatedBy')->nullable();
-            $table->dateTime('deletedAt')->nullable();
-            $table->integer('deletedBy')->nullable();
+            $table->timestamps();
         });
     }
 

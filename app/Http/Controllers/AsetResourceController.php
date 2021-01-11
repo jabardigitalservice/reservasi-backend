@@ -56,9 +56,6 @@ class AsetResourceController extends Controller
             $aset->name = $request->name;
             $aset->status = $request->status;
             $aset->description = $request->description;
-            $aset->createdAt = \Carbon\Carbon::now();
-            // temporary id admin are harcoded, because next step it will use id from SSO
-            $aset->createdBy = '123';
             $aset->save();
             DB::commit();
 
