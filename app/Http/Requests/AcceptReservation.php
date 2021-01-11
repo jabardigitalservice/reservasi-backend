@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ReservationStatus;
 use App\Enums\UserRole;
 use App\Models\Reservation;
 use Illuminate\Foundation\Http\FormRequest;
