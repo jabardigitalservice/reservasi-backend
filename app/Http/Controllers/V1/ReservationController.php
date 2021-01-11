@@ -9,6 +9,7 @@ use App\Http\Requests\StoreReservation;
 use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ReservationController extends Controller
@@ -16,44 +17,25 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
         $records = Reservation::query();
-
-        $search = $request->get('search', false);
-        $sortBy = $request->get('sortBy', 'date');
-        $sortOrder = $request->get('sort_order', 'desc');
+        $sortBy = $request->input('sortBy', 'created_at');
+        $sortOrder = $request->input('sort_order', 'desc');
         $perPage = $request->input('per_page', 15);
-
         $perPage = $this->getPaginationSize($perPage);
 
         //search
-        if ($search) {
-            $records->where('title', 'like', '%' . $search . '%');
+        if ($request->has('search')) {
+            $records->where('title', 'like', '%' . $request->input('search') . '%');
         }
 
         //filter
-        if ($request->has('date')) {
-            $records->whereDate('created_at', date('Y-m-d'));
-        } elseif ($request->has('approval_status')) {
-            $records->where('approval_status', $request->get('approval_status'));
-        } elseif ($request->has('reservation_start')) {
-            $records->where('created_at', '>=', $request->get('reservation_start'));
-        } elseif ($request->has('reservation_end')) {
-            $records->where('created_at', '>=', $request->get('reservation_end'));
-        }
+        $this->filter($request, $records);
 
         //order
-        if ($sortBy == 'date') {
-            $sortBy = 'created_at';
-        }
-
         $records->orderBy($sortBy, $sortOrder);
 
         //check role employee
         if ($request->user()->role === UserRole::EMPLOYEE()) {
             $records->where('user_id_reservation', $request->user()->id);
-        }
-
-        if (strtoupper($perPage) === 'ALL') {
-            return ReservationResource::collection($records->get());
         }
 
         return ReservationResource::collection($records->paginate($perPage));
@@ -82,7 +64,7 @@ class ReservationController extends Controller
     {
         $reservation->approval_status = $request->approval_status;
         $reservation->note = $request->note;
-        $reservation->approval_date = $request->note;
+        $reservation->approval_date = Carbon::now();
         $reservation->save();
         return new ReservationResource($reservation);
     }
@@ -107,5 +89,21 @@ class ReservationController extends Controller
             return $perPage;
         }
         return 15;
+    }
+
+    protected function filter(Request $request, $records)
+    {
+        if ($request->has('created_at')) {
+            $records->whereDate('created_at', date('Y-m-d'));
+        }
+        if ($request->has('approval_status')) {
+            $records->where('approval_status', $request->input('approval_status'));
+        }
+        if ($request->has('reservation_start')) {
+            $records->where('created_at', '>=', $request->input('reservation_start'));
+        }
+        if ($request->has('reservation_end')) {
+            $records->where('created_at', '>=', $request->input('reservation_end'));
+        }
     }
 }

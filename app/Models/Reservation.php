@@ -8,6 +8,8 @@ class Reservation extends Model
 {
     use SoftDeletes;
 
+    protected $guarded = [];
+
     protected $dates = [
         'reservation_start',
         'reservation_end',

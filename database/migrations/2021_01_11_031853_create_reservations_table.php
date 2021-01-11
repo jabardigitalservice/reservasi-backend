@@ -33,8 +33,8 @@ class CreateReservationsTable extends Migration
                 ->default('not_yet_approved');
             $table->dateTime('approval_date')
                 ->nullable();
-            $table->uuid('user_id_updated');
-            $table->uuid('user_id_deleted');
+            $table->uuid('user_id_updated')->nullable();
+            $table->uuid('user_id_deleted')->nullable();
             $table->softDeletes();
             $table->index(['reservation_title', 'asset_name' , 'username']);
             $table->timestamps();

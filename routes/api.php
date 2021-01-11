@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'reservation'], function () {
+Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
     Route::get('/', 'ReservationController@index');
     Route::post('store', 'ReservationController@store');
     Route::put('accept/{reservation}', 'ReservationController@accept');
