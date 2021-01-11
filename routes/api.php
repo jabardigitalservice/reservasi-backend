@@ -17,3 +17,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['prefix' => 'reservation'], function () {
+    Route::get('/', 'ReservationController@index');
+    Route::post('store', 'ReservationController@store');
+    Route::put('accept/{id}', 'ReservationController@accept');
+    Route::delete('delete', 'ReservationController@delete');
+    Route::get('show/{id}', 'ReservationController@show');
+});
