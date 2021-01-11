@@ -6,22 +6,13 @@ use Spatie\Enum\Enum;
 
 final class UserRole extends Enum
 {
-    public static function EMPLOYEE(): UserRole
+    public static function EMPLOYEE(): string
     {
-        return new class() extends UserRole {
-            public function getValue(): string
-            {
-                return 'employee';
-            }
-        };
+        return 'employee';
     }
-    public static function ADMIN(): UserRole
+    public static function ADMIN(): string
     {
-        return new class() extends UserRole {
-            public function getValue(): string
-            {
-                return 'admin';
-            }
-        };
+
+        return 'admin';
     }
 }

@@ -6,9 +6,9 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AcceptReservation;
 use App\Http\Requests\StoreReservation;
+use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,93 +16,59 @@ class ReservationController extends Controller
 {
     public function index(Request $request)
     {
-        $models = Reservation::query();
+        $records = Reservation::query();
 
-        $params = $request->get('params', false);
         $search = $request->get('search', false);
-        $order = $request->get('order', 'date');
+        $sortBy = $request->get('sortBy', 'date');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $perPage = $request->input('per_page', 15);
 
-        if ($search != '') {
-            $models = $models->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%');
-            });
+        if ($search) {
+            $records->where('title', 'like', '%' . $search . '%');
         }
 
-        if ($params) {
-            $params = json_decode($params, true);
-            foreach ($params as $key => $val) {
-                if ($val !== false && ($val == '' || is_array($val) && count($val) == 0)) {
-                    continue;
-                }
-                switch ($key) {
-                    case 'today':
-                        $models->whereDate('created_at', date('Y-m-d'));
-                        break;
-                    case 'approval_status':
-                        $models->where('approval_status', $val);
-                        break;
-                    case 'reservation_start':
-                        $models->whereDate('created_at', '>=', Carbon::parse($val)->format('Y-m-d'));
-                        break;
-                    case 'reservation_end':
-                        $models->whereDate('created_at', '<=', Carbon::parse($val)->format('Y-m-d'));
-                        break;
-                }
-            }
+        if ($request->has('date')) {
+            $records->whereDate('created_at', date('Y-m-d'));
+        } elseif ($request->has('approval_status')) {
+            $records->where('approval_status', $request->get('approval_status'));
+        } elseif ($request->has('reservation_start')) {
+            $records->where('created_at', '>=', $request->get('reservation_start'));
+        } elseif ($request->has('reservation_end')) {
+            $records->where('created_at', '>=', $request->get('reservation_end'));
+        } elseif ($sortBy == 'date') {
+            $sortBy = 'created_at';
         }
-
-        if ($order) {
-            $order_direction = $request->get('order_direction', 'desc');
-            switch ($order) {
-                case 'date':
-                    $models = $models->orderBy('created_at', $order_direction);
-                    break;
-                case 'title':
-                case 'reservation_start':
-                case 'approval_status':
-                    $models = $models->orderBy($order, $order_direction);
-                    break;
-                default:
-                    break;
-            }
-        }
+        $records->orderBy($sortBy, $sortOrder);
 
         //check role employee
-        if ($request->user()->role === UserRole::EMPLOYEE()->getValue()) {
-            $models = $models->where('user_id_reservation', $request->user()->id);
+        if ($request->user()->role === UserRole::EMPLOYEE()) {
+            $records->where('user_id_reservation', $request->user()->id);
         }
 
-        $count = $models->count();
-        $page = $request->get('page', 1);
-        $perpage = $request->get('perpage', 20);
+        if (strtoupper($perPage) === 'ALL') {
+            return ReservationResource::collection($records->get());
+        }
 
-        $models = $models->skip(($page - 1) * $perpage)->take($perpage)->get();
-
-        $result = [
-            'data' => $models,
-            'count' => $count,
-        ];
-
-        return response()->json($result);
+        return ReservationResource::collection($records->paginate($perPage));
     }
 
     public function store(StoreReservation $request)
     {
         DB::beginTransaction();
         try {
-            $asset = Asset::findOrFail($request->asset_id);
+            $asset = Asset::find($request->asset_id);
             $user = $request->user();
-            $reservation = new Reservation();
-            $reservation->user_id_reservation = $user->id;
-            $reservation->username = $user->username;
-            $reservation->reservation_title = $request->reservation_title;
-            $reservation->reservation_description = $request->reservation_description;
-            $reservation->asset_id = $request->asset_id;
-            $reservation->asset_name = $asset->asset_name;
-            $reservation->asset_description = $asset->asset_description;
-            $reservation->reservation_start = Carbon::parse($request->reservation_start)->format('Y-m-d H:i:s');
-            $reservation->reservation_end = Carbon::parse($request->reservation_end)->format('Y-m-d H:i:s');
-            $reservation->save();
+            Reservation::create([
+                'user_id_reservation' => $user->id,
+                'username' => $user->username,
+                'reservation_title' => $request->reservation_title,
+                'reservation_description' => $request->reservation_description,
+                'asset_id' => $request->asset_id,
+                'asset_name' => $asset->asset_name,
+                'asset_description' => $asset->asset_description,
+                'reservation_start' => $request->reservation_start,
+                'reservation_end' => $request->reservation_end,
+            ]);
             DB::commit();
             return response()->json(['code' => 200, 'message' => 'success'], 200);
         } catch (\Throwable $th) {

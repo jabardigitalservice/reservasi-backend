@@ -6,33 +6,20 @@ use Spatie\Enum\Enum;
 
 final class ReservationStatus extends Enum
 {
-    public static function NOT_YET_APPROVED(): ReservationStatus
+    public static function NOT_YET_APPROVED(): string
     {
-        return new class() extends ReservationStatus {
-            public function getValue(): string
-            {
-                return 'not_yet_approved';
-            }
-        };
+
+        return 'not_yet_approved';
     }
 
-    public static function ALREADY_APPROVED(): ReservationStatus
+    public static function ALREADY_APPROVED(): string
     {
-        return new class() extends ReservationStatus {
-            public function getValue(): string
-            {
-                return 'already_approved';
-            }
-        };
+        return 'already_approved';
+
     }
 
-    public static function REJECTED(): ReservationStatus
+    public static function REJECTED(): string
     {
-        return new class() extends ReservationStatus {
-            public function getValue(): string
-            {
-                return 'rejected';
-            }
-        };
+        return 'rejected';
     }
 }
