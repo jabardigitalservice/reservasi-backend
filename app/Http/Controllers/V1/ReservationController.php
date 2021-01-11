@@ -28,7 +28,7 @@ class ReservationController extends Controller
         }
 
         //filter
-        $this->filterList($request, $records);
+        $records = $this->filterList($request, $records);
 
         //order
         $records->orderBy($sortBy, $sortOrder);
@@ -105,5 +105,6 @@ class ReservationController extends Controller
         if ($request->has('reservation_end')) {
             $records->where('created_at', '>=', $request->input('reservation_end'));
         }
+        return $records;
     }
 }
