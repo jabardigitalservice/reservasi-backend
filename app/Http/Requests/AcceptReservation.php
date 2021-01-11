@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\UserRole;
 use App\Models\Reservation;
+use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AcceptReservation extends FormRequest
@@ -15,7 +15,7 @@ class AcceptReservation extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->role == UserRole::ADMIN();
+        return $this->user()->role == User::ADMIN;
     }
 
     /**

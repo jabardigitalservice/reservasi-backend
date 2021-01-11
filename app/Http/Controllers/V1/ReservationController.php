@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AcceptReservation;
 use App\Http\Requests\StoreReservation;
 use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -34,7 +34,7 @@ class ReservationController extends Controller
         $records->orderBy($sortBy, $sortOrder);
 
         //check role employee
-        if ($request->user()->role === UserRole::EMPLOYEE()) {
+        if ($request->user()->role === User::EMPLOYEE) {
             $records->where('user_id_reservation', $request->user()->id);
         }
 
