@@ -167,10 +167,10 @@ class ReservationController extends Controller
             $records->where('approval_status', 'LIKE', '%' . $request->input('status') . '%');
         }
         if ($request->has('start_date')) {
-            $records->whereDate('date', '>=', Carbon::parse($request->input('start_date')));
+            $records->where('date', '>=', Carbon::parse($request->input('start_date')));
         }
         if ($request->has('end_date')) {
-            $records->whereDate('date', '<=', Carbon::parse($request->input('end_date')));
+            $records->where('date', '<=', Carbon::parse($request->input('end_date')));
         }
         return $records;
     }
