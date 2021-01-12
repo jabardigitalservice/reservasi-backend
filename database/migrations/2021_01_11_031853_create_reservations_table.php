@@ -29,8 +29,8 @@ class CreateReservationsTable extends Migration
             $table->string('asset_description')->nullable();
             $table->dateTime('reservation_start');
             $table->dateTime('reservation_end');
-            $table->enum('approval_status', ['NOT_YET_APPROVED', 'ALREADY_APPROVED', 'REJECTED'])
-                ->default('NOT_YET_APPROVED');
+            $table->enum('approval_status', ['not_yet_approved', 'already_approved', 'rejected'])
+                ->default('not_yet_approved');
             $table->dateTime('approval_date')
                 ->nullable();
             $table->uuid('user_id_updated')->nullable();
