@@ -5,10 +5,13 @@ namespace App\Http\Requests;
 use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Spatie\Enum\Laravel\Http\Requests\TransformsEnums;
 use Spatie\Enum\Laravel\Rules\EnumRule;
 
 class AcceptReservation extends FormRequest
 {
+
+    use TransformsEnums;
     /**
      * Determine if the user is authorized to make this request.
      *
