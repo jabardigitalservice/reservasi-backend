@@ -20,9 +20,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 //---ROUTE FOR ASSET---//
-Route::post('asset', 'AssetController@store');
-Route::put('asset/{asset}', 'AssetController@update');
-Route::get('asset', 'AssetController@getList');
 Route::get('asset-available-list', 'AssetController@getAllActive');
+Route::get('asset', 'AssetController@getList');
+Route::post('asset', 'AssetController@store');
 Route::get('asset/{asset}', 'AssetController@getById');
+Route::put('asset/{asset}', 'AssetController@update');
 Route::delete('asset/{asset}', 'AssetController@destroy');

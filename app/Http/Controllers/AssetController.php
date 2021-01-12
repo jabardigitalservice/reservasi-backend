@@ -21,7 +21,7 @@ class AssetController extends Controller
     {
         $result = $asset->create($request->all());
 
-        return response()->json(['message' => 'Asset created!', 'data' => $result], 201);
+        return new AssetResource($result);
     }
 
     /**
@@ -31,16 +31,11 @@ class AssetController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(EditAsetRequest $request, $id)
+    public function update(EditAsetRequest $request, Asset $asset)
     {
-        // check exist or not
-        $assetExist = Asset::find($id);
-        if (!$assetExist) {
-            return response()->json(['message' => 'Asset record with id '. $id .' is not exists.',], 404);
-        }
-        $assetExist->fill($request->all())->save();
+        $asset->fill($request->all())->save();
 
-        return response()->json(['message' => 'Asset updated!', 'data' => $assetExist], 200);
+        return new AssetResource($asset);
     }
 
     /**
@@ -48,11 +43,11 @@ class AssetController extends Controller
      * @author SedekahCode
      * @since Januari 2021
      */
-    public function getAllActive(Asset $asset)
+    public function getAllActive()
     {
-        $result = $asset->where('status', 'active')->get();
+        $result = Asset::where('status', 'active')->get();
 
-        return response()->json(['data' => $result], 200);
+        return  new AssetResource($result);
     }
 
     /**
@@ -60,24 +55,14 @@ class AssetController extends Controller
      * @author SedekahCode
      * @since Januari 2021
      */
-    public function getById($id)
+    public function getById(Asset $asset)
     {
-        // check exist or not
-        $assetExist = Asset::find($id);
-        if (!$assetExist) {
-            return response()->json(['message' => 'Asset record with id '. $id .' is not exists.'], 404);
-        }
-        return response()->json(['message' => 'Asset found', 'data' => $assetExist],200);
+        return new AssetResource($asset);
     }
 
-    public function destroy($id)
+    public function destroy(Asset $asset)
     {
-        // check exist or not
-        $assetExist = Asset::find($id);
-        if (!$assetExist) {
-            return response()->json(['message' => 'Asset record with id '. $id .' is not exists.'], 404);
-        }
-        $assetExist->delete();
+        $asset->delete();
 
         return response()->json(['message' => 'Asset record deleted.'], 200);
     }
