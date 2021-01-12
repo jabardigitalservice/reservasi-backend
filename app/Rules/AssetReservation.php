@@ -35,7 +35,7 @@ class AssetReservation implements Rule
     {
         return Reservation::whereTime('start_time', '>=', Carbon::parse($this->start_time))
             ->whereTime('end_time', '<=', Carbon::parse($this->end_time))
-            ->whereDate('date', Carbon::parse($this->date))
+            ->where('date', Carbon::parse($this->date))
             ->where($attribute, $value)->doesntExist();
     }
 
