@@ -26,7 +26,7 @@ class EditAsetRequest extends FormRequest
     public function rules()
     {
         return [
-            'status' => 'in:aktif,tidak aktif',
+            'status' => 'in:active,not active',
         ];
     }
 
