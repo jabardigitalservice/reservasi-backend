@@ -104,7 +104,7 @@ class ReservationController extends Controller
             $records->where('created_at', '>=', $request->input('reservation_start'));
         }
         if ($request->has('reservation_end')) {
-            $records->where('created_at', '>=', $request->input('reservation_end'));
+            $records->where('created_at', '<=', $request->input('reservation_end'));
         }
         return $records;
     }
