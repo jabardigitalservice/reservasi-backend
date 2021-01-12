@@ -15,6 +15,12 @@ use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
+    /**
+     * index
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function index(Request $request)
     {
         $records = Reservation::query();
@@ -42,6 +48,12 @@ class ReservationController extends Controller
         return ReservationResource::collection($records->paginate($perPage));
     }
 
+    /**
+     * store
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function store(StoreReservation $request)
     {
         $asset = Asset::find($request->asset_id);
@@ -62,27 +74,53 @@ class ReservationController extends Controller
         return ReservationResource::collection($reservation);
     }
 
-    public function accept(AcceptReservation $request, Reservation $reservation)
+    /**
+     * acceptance
+     *
+     * @param  mixed $request
+     * @param  mixed $reservation
+     * @return void
+     */
+    public function acceptance(AcceptReservation $request, Reservation $reservation)
     {
         $reservation->approval_status = $request->approval_status;
         $reservation->note = $request->note;
         $reservation->approval_date = Carbon::now();
+        $reservation->user_id_updated = $request->user()->id;
         $reservation->save();
         return new ReservationResource($reservation);
     }
 
-    public function delete(Reservation $reservation)
+    /**
+     * destroy
+     *
+     * @param  mixed $reservation
+     * @return void
+     */
+    public function destroy(Reservation $reservation)
     {
         abort_if($reservation->approval_status != ReservationStatusEnum::NOT_YET_APPROVED(), 500, 'error');
         $reservation->delete();
         return response()->json(['message' => 'DELETED']);
     }
 
+    /**
+     * show
+     *
+     * @param  mixed $reservation
+     * @return void
+     */
     public function show(Reservation $reservation)
     {
         return new ReservationResource($reservation);
     }
 
+    /**
+     * bookingList
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function bookingList(Request $request)
     {
         $asset_id = $request->input('asset_id');
@@ -97,6 +135,12 @@ class ReservationController extends Controller
         return ReservationResource::collection($records->get());
     }
 
+    /**
+     * getPaginationSize
+     *
+     * @param  mixed $perPage
+     * @return void
+     */
     protected function getPaginationSize($perPage)
     {
         $perPageAllowed = [50, 100, 500];
@@ -107,6 +151,13 @@ class ReservationController extends Controller
         return 15;
     }
 
+    /**
+     * filterList
+     *
+     * @param  mixed $request
+     * @param  mixed $records
+     * @return void
+     */
     protected function filterList(Request $request, $records)
     {
         if ($request->has('asset_id')) {
