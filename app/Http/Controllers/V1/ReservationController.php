@@ -31,7 +31,7 @@ class ReservationController extends Controller
 
         //search
         if ($request->has('search')) {
-            $records->where('title', 'like', '%' . $request->input('search') . '%');
+            $records->where('title', 'LIKE', '%' . $request->input('search') . '%');
         }
 
         //filter
