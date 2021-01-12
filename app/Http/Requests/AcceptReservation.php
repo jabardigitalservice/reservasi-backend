@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use Illuminate\Foundation\Http\FormRequest;
-use Spatie\Enum\Laravel\Rules\EnumRule;
 
 class AcceptReservation extends FormRequest
 {
@@ -29,7 +28,7 @@ class AcceptReservation extends FormRequest
         return [
             'approval_status' => [
                 'required',
-                new EnumRule(ReservationStatusEnum::class),
+                'enum:' . ReservationStatusEnum::class,
             ],
             'note' => 'required',
         ];
