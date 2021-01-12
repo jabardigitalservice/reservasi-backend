@@ -18,9 +18,9 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
         $records = Reservation::query();
-        $sortBy = $request->input('sortBy', 'created_at');
-        $sortOrder = $request->input('sort_order', 'desc');
-        $perPage = $request->input('per_page', 15);
+        $sortBy = $request->input('sortBy', 'date');
+        $orderBy = $request->input('orderBy', 'desc');
+        $perPage = $request->input('perPage', 10);
         $perPage = $this->getPaginationSize($perPage);
 
         //search
@@ -32,7 +32,7 @@ class ReservationController extends Controller
         $records = $this->filterList($request, $records);
 
         //order
-        $records->orderBy($sortBy, $sortOrder);
+        $records->orderBy($sortBy, $orderBy);
 
         //check role employee
         if ($request->user()->role === UserRoleEnum::EMPLOYEE()) {
@@ -49,13 +49,14 @@ class ReservationController extends Controller
         $reservation = Reservation::create([
             'user_id_reservation' => $user->id,
             'username' => $user->username,
-            'reservation_title' => $request->reservation_title,
-            'reservation_description' => $request->reservation_description,
+            'title' => $request->title,
+            'description' => $request->description,
             'asset_id' => $request->asset_id,
             'asset_name' => $asset->asset_name,
             'asset_description' => $asset->asset_description,
-            'reservation_start' => $request->reservation_start,
-            'reservation_end' => $request->reservation_end,
+            'date' => $request->date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
         ]);
 
         return ReservationResource::collection($reservation);
@@ -82,6 +83,20 @@ class ReservationController extends Controller
         return new ReservationResource($reservation);
     }
 
+    public function bookingList(Request $request)
+    {
+        $asset_id = $request->input('asset_id');
+        $date = $request->input('date', date('Y-m-d'));
+
+        $records = Reservation::where('date', $date);
+
+        if ($asset_id) {
+            $records->where('asset_id', $asset_id);
+        }
+
+        return ReservationResource::collection($records);
+    }
+
     protected function getPaginationSize($perPage)
     {
         $perPageAllowed = [50, 100, 500];
@@ -94,17 +109,17 @@ class ReservationController extends Controller
 
     protected function filterList(Request $request, $records)
     {
-        if ($request->has('created_at')) {
-            $records->whereDate('created_at', date('Y-m-d'));
+        if ($request->has('asset_id')) {
+            $records->where('asset_id', $request->input('asset_id'));
         }
-        if ($request->has('approval_status')) {
-            $records->where('approval_status', $request->input('approval_status'));
+        if ($request->has('status')) {
+            $records->where('approval_status', 'LIKE', '%' . $request->input('status') . '%');
         }
-        if ($request->has('reservation_start')) {
-            $records->where('created_at', '>=', $request->input('reservation_start'));
+        if ($request->has('start_date')) {
+            $records->whereDate('date', '>=', Carbon::parse($request->input('start_date')));
         }
-        if ($request->has('reservation_end')) {
-            $records->where('created_at', '<=', $request->input('reservation_end'));
+        if ($request->has('end_date')) {
+            $records->whereDate('date', '<=', Carbon::parse($request->input('end_date')));
         }
         return $records;
     }

@@ -17,8 +17,8 @@ class CreateReservationsTable extends Migration
             $table->id();
             $table->uuid('user_id_reservation');
             $table->string('username');
-            $table->string('reservation_title');
-            $table->string('reservation_description')->nullable();
+            $table->string('title');
+            $table->string('description')->nullable();
             $table->string('note')->nullable();
             $table->foreignId('asset_id')
                 ->nullable()
@@ -27,8 +27,9 @@ class CreateReservationsTable extends Migration
                 ->onDelete('set null');
             $table->string('asset_name');
             $table->string('asset_description')->nullable();
-            $table->dateTime('reservation_start');
-            $table->dateTime('reservation_end');
+            $table->date('date');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->enum('approval_status', ['not_yet_approved', 'already_approved', 'rejected'])
                 ->default('not_yet_approved');
             $table->dateTime('approval_date')
@@ -36,7 +37,7 @@ class CreateReservationsTable extends Migration
             $table->uuid('user_id_updated')->nullable();
             $table->uuid('user_id_deleted')->nullable();
             $table->softDeletes();
-            $table->index(['reservation_title', 'asset_name' , 'username']);
+            $table->index(['title', 'asset_name' , 'username']);
             $table->timestamps();
         });
     }

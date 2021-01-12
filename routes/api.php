@@ -20,8 +20,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
     Route::get('/', 'ReservationController@index');
-    Route::post('store', 'ReservationController@store');
-    Route::put('accept/{id}', 'ReservationController@accept');
-    Route::delete('delete/{id}', 'ReservationController@delete');
-    Route::get('show/{id}', 'ReservationController@show');
+    Route::post('/', 'ReservationController@store');
+    Route::get('/{id}', 'ReservationController@show');
+    Route::get('/booking-list', 'ReservationController@bookingList');
+    Route::put('acceptance/{id}', 'ReservationController@accept');
+    Route::delete('/{id}', 'ReservationController@delete');
 });

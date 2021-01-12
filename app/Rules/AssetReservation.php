@@ -3,22 +3,25 @@
 namespace App\Rules;
 
 use App\Models\Reservation;
+use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
 
 class AssetReservation implements Rule
 {
 
-    public $reservation_start;
-    public $reservation_end;
+    public $start_time;
+    public $end_time;
+    public $date;
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct($reservation_start, $reservation_end)
+    public function __construct($date, $start_time, $end_time)
     {
-        $this->reservation_start = $reservation_start;
-        $this->reservation_end = $reservation_end;
+        $this->date = $date;
+        $this->start_time = $start_time;
+        $this->end_time = $end_time;
     }
 
     /**
@@ -30,8 +33,9 @@ class AssetReservation implements Rule
      */
     public function passes($attribute, $value)
     {
-        return Reservation::whereDate('reservation_start', '>=', $this->reservation_start)
-            ->whereDate('reservation_end', '<=', $this->reservation_end)
+        return Reservation::whereTime('start_time', '>=', Carbon::parse($this->start_time))
+            ->whereTime('end_time', '<=', Carbon::parse($this->end_time))
+            ->whereDate('date', Carbon::parse($this->date))
             ->where($attribute, $value)->doesntExist();
     }
 

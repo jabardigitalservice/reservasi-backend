@@ -9,18 +9,23 @@ class Reservation extends Model
 {
     use SoftDeletes;
 
-    protected $guarded = [
-        'id',
-        'created_at',
-        'updated_at',
-        'deleted_at'
+    protected $fillable = [
+        'user_id_reservation',
+        'username',
+        'title',
+        'description',
+        'asset_id',
+        'asset_name',
+        'asset_description',
+        'date',
+        'start_time',
+        'end_time'
     ];
 
     protected $dates = [
-        'reservation_start',
-        'reservation_end',
         'created_at',
         'updated_at',
+        'deleted_at'
     ];
 
     public function getSomeDateAttribute($date)

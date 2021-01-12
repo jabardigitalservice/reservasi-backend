@@ -25,14 +25,15 @@ class StoreReservation extends FormRequest
     public function rules()
     {
         return [
-            'reservation_title' => 'required',
+            'title' => 'required',
             'asset_id' => [
                 'required',
                 'exists:asset,id',
-                new AssetReservation($this->reservation_start, $this->reservation_end)
+                new AssetReservation($this->date, $this->start_time, $this->end_time)
             ],
-            'reservation_start' => 'required|date|date_format:Y-m-d H:i:s',
-            'reservation_end' => 'required|date|date_format:Y-m-d H:i:s|after:reservation_start',
+            'date' => 'required|date|date_format:Y-m-d',
+            'start_time' => 'required|date|date_format:H:i',
+            'end_time' => 'required|date|date_format:H:i',
         ];
     }
 
