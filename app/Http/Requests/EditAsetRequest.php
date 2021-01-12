@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Enums\AssetStatusEnum;
+use Spatie\Enum\Laravel\Rules\EnumRule;
 
 class EditAsetRequest extends FormRequest
 {
@@ -27,9 +28,7 @@ class EditAsetRequest extends FormRequest
     public function rules()
     {
         return [
-            'status' =>  [
-                'enum:'.AssetStatusEnum::class,
-            ],
+            'status' =>  new EnumRule(AssetStatusEnum::class),
         ];
     }
 
