@@ -94,7 +94,7 @@ class ReservationController extends Controller
             $records->where('asset_id', $asset_id);
         }
 
-        return ReservationResource::collection($records);
+        return ReservationResource::collection($records->get());
     }
 
     protected function getPaginationSize($perPage)
