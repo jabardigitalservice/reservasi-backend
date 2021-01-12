@@ -30,11 +30,9 @@ class AssetReservation implements Rule
      */
     public function passes($attribute, $value)
     {
-        $reservation = Reservation::whereDate('reservation_start', '>=', $this->reservation_start)
+        return Reservation::whereDate('reservation_start', '>=', $this->reservation_start)
             ->whereDate('reservation_end', '<=', $this->reservation_end)
-            ->where($attribute, $value)->first();
-
-        return $reservation ? false : true;
+            ->where($attribute, $value)->doesntExist();
     }
 
     /**

@@ -9,11 +9,12 @@ class Reservation extends Model
 {
     use SoftDeletes;
 
-    const NOT_YET_APPROVED = 'NOT_YET_APPROVED';
-    const ALREADY_APPROVED = 'ALREADY_APPROVED';
-    const REJECTED = 'REJECTED';
-
-    protected $guarded = [];
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
 
     protected $dates = [
         'reservation_start',

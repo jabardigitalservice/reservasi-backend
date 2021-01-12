@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Enums\ReservationStatusEnum;
+use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AcceptReservation;
 use App\Http\Requests\StoreReservation;
 use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -34,7 +35,7 @@ class ReservationController extends Controller
         $records->orderBy($sortBy, $sortOrder);
 
         //check role employee
-        if ($request->user()->role === User::EMPLOYEE) {
+        if ($request->user()->role === UserRoleEnum::EMPLOYEE()) {
             $records->where('user_id_reservation', $request->user()->id);
         }
 
@@ -71,7 +72,7 @@ class ReservationController extends Controller
 
     public function delete(Reservation $reservation)
     {
-        abort_if($reservation->approval_status != 'not_yet_approved', 500, 'error');
+        abort_if($reservation->approval_status != ReservationStatusEnum::NOT_YET_APPROVED(), 500, 'error');
         $reservation->delete();
         return response()->json(['message' => 'DELETED']);
     }

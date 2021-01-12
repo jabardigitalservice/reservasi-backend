@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Reservation;
-use App\User;
+use App\Enums\ReservationStatusEnum;
+use App\Enums\UserRoleEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Spatie\Enum\Laravel\Rules\EnumRule;
 
 class AcceptReservation extends FormRequest
 {
@@ -15,7 +16,7 @@ class AcceptReservation extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->role == User::ADMIN;
+        return $this->user()->role == UserRoleEnum::ADMIN();
     }
 
     /**
@@ -25,11 +26,12 @@ class AcceptReservation extends FormRequest
      */
     public function rules()
     {
-        $alreadyApproved = strtolower(Reservation::ALREADY_APPROVED);
-        $rejected = strtolower(Reservation::REJECTED);
         return [
-            'approval_status' => "required|in:$alreadyApproved,$rejected",
-            'note' => 'required'
+            'approval_status' => [
+                'required',
+                new EnumRule(ReservationStatusEnum::class),
+            ],
+            'note' => 'required',
         ];
     }
 }

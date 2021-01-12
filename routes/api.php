@@ -21,7 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
     Route::get('/', 'ReservationController@index');
     Route::post('store', 'ReservationController@store');
-    Route::put('accept/{reservation}', 'ReservationController@accept');
-    Route::delete('delete/{reservation}', 'ReservationController@delete');
-    Route::get('show/{reservation}', 'ReservationController@show');
+    Route::put('accept/{id}', 'ReservationController@accept');
+    Route::delete('delete/{id}', 'ReservationController@delete');
+    Route::get('show/{id}', 'ReservationController@show');
 });
