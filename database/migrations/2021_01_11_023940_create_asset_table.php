@@ -16,7 +16,7 @@ class CreateAssetTable extends Migration
         Schema::create('asset', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->enum('status', ['active', 'not active']);
+            $table->enum('status', ['active', 'not_active']);
             $table->string('description');
             $table->timestamps();
         });

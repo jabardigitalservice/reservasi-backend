@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Enums\AssetStatusEnum;
 
 class EditAsetRequest extends FormRequest
 {
@@ -26,7 +27,9 @@ class EditAsetRequest extends FormRequest
     public function rules()
     {
         return [
-            'status' => 'in:active,not active',
+            'status' =>  [
+                'enum:'.AssetStatusEnum::class,
+            ],
         ];
     }
 

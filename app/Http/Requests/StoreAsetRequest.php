@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Spatie\Enum\Laravel\Rules\EnumRule;
 use App\Enums\AssetStatusEnum;
 
 class StoreAsetRequest extends FormRequest
@@ -29,7 +28,10 @@ class StoreAsetRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'status' => 'required|in:active,not active',
+            'status' =>  [
+                'required',
+                'enum:'.AssetStatusEnum::class,
+            ],
             'description' => 'required'
         ];
     }
