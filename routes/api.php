@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'HomeController');
 
-//---ROUTE FOR ASSET---//
-Route::prefix('v1')->group(function () {
+Route::group(['middleware' => ['auth:api']], function () {
     Route::apiResource('asset', 'AssetController');
     Route::get('asset/list', 'ListController@index');
 });
