@@ -5,7 +5,6 @@ namespace App\Http\Controllers\V1;
 use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AcceptReservation;
 use App\Http\Requests\StoreReservation;
 use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
@@ -15,6 +14,17 @@ use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
+    /**
+     * __construct
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+        $this->middleware('can:isEmployee')->only(['store', 'destroy']);
+    }
+
     /**
      * index
      *
@@ -75,23 +85,6 @@ class ReservationController extends Controller
     }
 
     /**
-     * acceptance
-     *
-     * @param  mixed $request
-     * @param  mixed $reservation
-     * @return void
-     */
-    public function acceptance(AcceptReservation $request, Reservation $reservation)
-    {
-        $reservation->approval_status = $request->approval_status;
-        $reservation->note = $request->note;
-        $reservation->approval_date = Carbon::now();
-        $reservation->user_id_updated = $request->user()->id;
-        $reservation->save();
-        return new ReservationResource($reservation);
-    }
-
-    /**
      * destroy
      *
      * @param  mixed $reservation
@@ -113,26 +106,6 @@ class ReservationController extends Controller
     public function show(Reservation $reservation)
     {
         return new ReservationResource($reservation);
-    }
-
-    /**
-     * bookingList
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function bookingList(Request $request)
-    {
-        $asset_id = $request->input('asset_id');
-        $date = $request->input('date', date('Y-m-d'));
-
-        $records = Reservation::where('date', $date);
-
-        if ($asset_id) {
-            $records->where('asset_id', $asset_id);
-        }
-
-        return ReservationResource::collection($records->get());
     }
 
     /**
