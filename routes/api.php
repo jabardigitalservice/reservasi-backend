@@ -21,7 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['namespace' => 'V1'], function () {
     Route::resource('reservation', 'ReservationController')->except(['update', 'create', 'edit']);
     Route::group(['prefix' => 'reservation'], function () {
-        Route::get('reservation/booking-list', 'ReservationController@bookingList');
-        Route::put('reservation/acceptance/{id}', 'ReservationController@acceptance')->middleware('can:isAdmin');
+        Route::get('booking-list', 'ReservationController@bookingList');
+        Route::put('acceptance/{reservation}', 'ReservationController@acceptance')->middleware('can:isAdmin');
     });
 });
