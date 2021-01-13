@@ -19,9 +19,20 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 //---ROUTE FOR ASSET---//
-Route::get('asset-available-list', 'AssetController@getAllActive');
-Route::get('asset', 'AssetController@getList');
-Route::post('asset', 'AssetController@store');
-Route::get('asset/{asset}', 'AssetController@getById');
-Route::put('asset/{asset}', 'AssetController@update');
-Route::delete('asset/{asset}', 'AssetController@destroy');
+Route::prefix('asset')->group(function() {
+    Route::get('/available-list', 'AssetController@getAllActive');
+    Route::get('/', 'AssetController@getList');
+    Route::post('/', 'AssetController@store');
+    Route::get('/{asset}', 'AssetController@getById');
+    Route::put('/{asset}', 'AssetController@update');
+    Route::delete('/{asset}', 'AssetController@destroy');
+});
+
+Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
+    Route::get('/', 'ReservationController@index');
+    Route::post('/', 'ReservationController@store')->middleware('can:isEmployee');
+    Route::get('/{id}', 'ReservationController@show');
+    Route::get('/booking-list', 'ReservationController@bookingList');
+    Route::put('acceptance/{id}', 'ReservationController@acceptance')->middleware('can:isAdmin');
+    Route::delete('/{id}', 'ReservationController@destroy')->middleware('can:isEmployee');
+});
