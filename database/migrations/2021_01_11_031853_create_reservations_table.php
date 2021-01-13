@@ -22,7 +22,7 @@ class CreateReservationsTable extends Migration
             $table->string('note')->nullable();
             $table->foreignId('asset_id')
                 ->nullable()
-                ->constrained('asset')
+                ->constrained('assets')
                 ->onUpdate('no action')
                 ->onDelete('set null');
             $table->string('asset_name');

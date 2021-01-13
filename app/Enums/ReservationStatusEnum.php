@@ -5,9 +5,9 @@ namespace App\Enums;
 use Spatie\Enum\Enum;
 
 /**
- * @method static self NOT_YET_APPROVED()
- * @method static self ALREADY_APPROVED()
- * @method static self REJECTED()
+ * @method static self not_yet_approved()
+ * @method static self already_approved()
+ * @method static self rejected()
  */
 
 final class ReservationStatusEnum extends Enum {}

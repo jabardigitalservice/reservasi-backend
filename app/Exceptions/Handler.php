@@ -2,18 +2,23 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Mockery\Exception\InvalidOrderException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+
     /**
      * A list of the exception types that are not reported.
      *
      * @var array
      */
     protected $dontReport = [
-        //
+        InvalidOrderException::class,
     ];
 
     /**
@@ -36,6 +41,9 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
+        if (app()->bound('sentry') && $this->shouldReport($exception) && !app()->environment('local')) {
+            app('sentry')->captureException($exception);
+        }
         parent::report($exception);
     }
 
@@ -43,13 +51,39 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
+     * @param  \Throwable  $e
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Throwable
      */
-    public function render($request, Throwable $exception)
+    public function render($request, Throwable $e)
     {
-        return parent::render($request, $exception);
+        if ($e instanceof AuthenticationException) {
+            return $this->errorResponse('Unauthenticated', 401);
+        } elseif ($e instanceof ModelNotFoundException) {
+            return $this->errorResponse('Object Not Found', 404);
+        } elseif ($e instanceof NotFoundHttpException) {
+            return $this->errorResponse('Url Not Found', 404);
+        } else {
+            // ref: https://stackoverflow.com/a/35319899
+            //return self::response_error($e->getMessage(), 500);
+            $request->headers->set('Accept', 'application/json');
+            return parent::render($request, $e);
+        }
+    }
+
+    /**
+     * errorResponse
+     *
+     * @param  mixed $message
+     * @param  mixed $code
+     * @return void
+     */
+    protected function errorResponse($message, $code)
+    {
+        return response()->json([
+            'error' => $message,
+            'code' => $code,
+        ], $code);
     }
 }
