@@ -148,7 +148,7 @@ class ReservationController extends Controller
         if (in_array($perPage, $perPageAllowed)) {
             return $perPage;
         }
-        return 15;
+        return 10;
     }
 
     /**

@@ -14,15 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/', 'HomeController');
 
-Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
-    Route::get('/', 'ReservationController@index');
-    Route::post('/', 'ReservationController@store')->middleware('can:isEmployee');
-    Route::get('/{id}', 'ReservationController@show');
-    Route::get('/booking-list', 'ReservationController@bookingList');
-    Route::put('acceptance/{id}', 'ReservationController@acceptance')->middleware('can:isAdmin');
-    Route::delete('/{id}', 'ReservationController@destroy')->middleware('can:isEmployee');
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('/user', 'Settings\ProfileController@index');
+    Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
+        Route::get('/', 'ReservationController@index');
+        Route::post('/', 'ReservationController@store')->middleware('can:isEmployee');
+        Route::get('/{id}', 'ReservationController@show');
+        Route::get('/booking-list', 'ReservationController@bookingList');
+        Route::put('acceptance/{id}', 'ReservationController@acceptance')->middleware('can:isAdmin');
+        Route::delete('/{id}', 'ReservationController@destroy')->middleware('can:isEmployee');
+    });
 });
