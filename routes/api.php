@@ -23,6 +23,6 @@ Route::group(['namespace' => 'V1'], function () {
     Route::apiResource('reserved', 'ReservedController')
         ->only(['index', 'update'])
         ->parameters([
-        'reserved' => 'reservation',
+            'reserved' => 'reservation',
         ]);
 });
