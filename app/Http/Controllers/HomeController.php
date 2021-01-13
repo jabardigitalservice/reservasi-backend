@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -15,12 +15,14 @@ class HomeController extends Controller
      */
     public function __invoke(Request $request)
     {
-        // try to connect DB health check
-        $checkDbConnection = DB::connection()->getPdo();
-
-        return [
-            'app'     => config('app.name'),
-            'server'  => gethostname(),
+        $token = json_decode(Auth::token());
+        $data = [
+            'id' => $token->sub,
+            'name' => $token->name,
+            'username' => $token->preferred_username,
+            'email' => $token->email,
+            'realm_access' => $token->realm_access
         ];
+        return response()->json(['message' => 'success', 'status' => 200, 'data' => $data]);
     }
 }
