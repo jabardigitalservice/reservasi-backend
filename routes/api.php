@@ -21,7 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //---ROUTE FOR ASSET---//
 Route::prefix('v1')->group(function () {
     Route::apiResource('asset', 'AssetController');
-    Route::apiResource('list', 'ListController')->only('index');
+    Route::get('asset/list', 'ListController@index');
 });
 
 Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
