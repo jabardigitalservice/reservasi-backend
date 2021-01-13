@@ -19,6 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['namespace' => 'V1'], function () {
-    Route::apiResource('reservation', 'ReservationController');
-    Route::apiResource('reserved', 'ReservedController');
+    Route::apiResource('reservation', 'ReservationController')->except('update');
+    Route::apiResource('reserved', 'ReservedController')->only(['index', 'update']);
 });
