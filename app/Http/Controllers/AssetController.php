@@ -17,9 +17,9 @@ class AssetController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAsetRequest $request, Asset $asset)
+    public function store(StoreAsetRequest $request)
     {
-        $result = $asset->create($request->all());
+        $result = Asset::create($request->all());
 
         return new AssetResource($result);
     }
@@ -60,6 +60,13 @@ class AssetController extends Controller
         return new AssetResource($asset);
     }
 
+    /**
+     * Function to delete (soft delete) record
+     * @author SedekahCode
+     * @since Januari 2021
+     * @param Asset $asset
+     * @return void
+     */
     public function destroy(Asset $asset)
     {
         $asset->delete();
@@ -67,6 +74,13 @@ class AssetController extends Controller
         return response()->json(['message' => 'Asset record deleted.'], 200);
     }
 
+    /**
+     * Function to list asset, also can search filter by name and status
+     * @author SedekahCode
+     * @since Januari 2021
+     * @param Request $request
+     * @return void
+     */
     public function getList(Request $request)
     {
         $records = Asset::query();
@@ -84,6 +98,13 @@ class AssetController extends Controller
         return AssetResource::collection($records->paginate($perPage));
     }
 
+    /**
+     * Function to pagination
+     * @author SedekahCode
+     * @since Januari 2021
+     * @param Array $perPage
+     * @return void
+     */
     protected function getPaginationSize($perPage)
     {
         $perPageAllowed = [50, 100, 500];
@@ -94,6 +115,14 @@ class AssetController extends Controller
         return 10;
     }
 
+    /**
+     * Function to filter record by name or status
+     * @author SedekahCode
+     * @since Januari 2021
+     * @param Request $request
+     * @param Array $records
+     * @return void
+     */
     protected function searchList(Request $request, $records)
     {
         if ($request->has('name')) {

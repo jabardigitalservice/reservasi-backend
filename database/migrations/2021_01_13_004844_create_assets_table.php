@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAssetTable extends Migration
+class CreateAssetsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateAssetTable extends Migration
      */
     public function up()
     {
-        Schema::create('asset', function (Blueprint $table) {
+        Schema::create('assets', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->enum('status', ['active', 'not_active']);
@@ -30,9 +30,9 @@ class CreateAssetTable extends Migration
      */
     public function down()
     {
-        Schema::table('asset', function (Blueprint $table) {
+        Schema::table('assets', function (Blueprint $table) {
             $table->dropSoftDeletes();
         });
-        Schema::dropIfExists('asset');
+        Schema::dropIfExists('assets');
     }
 }
