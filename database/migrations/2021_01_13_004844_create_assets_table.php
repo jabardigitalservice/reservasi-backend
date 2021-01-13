@@ -30,9 +30,8 @@ class CreateAssetsTable extends Migration
      */
     public function down()
     {
-        Schema::table('assets', function (Blueprint $table) {
+        Schema::dropIfExists('assets', function (Blueprint $table) {
             $table->dropSoftDeletes();
         });
-        Schema::dropIfExists('assets');
     }
 }
