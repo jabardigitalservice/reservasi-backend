@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AcceptReservation;
 use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ReservedController extends Controller
