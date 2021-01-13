@@ -19,14 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 //---ROUTE FOR ASSET---//
-Route::prefix('asset')->group(function () {
-    Route::get('/available-list', 'AssetController@getAllActive');
-    Route::get('/', 'AssetController@getList');
-    Route::post('/', 'AssetController@store');
-    Route::get('/{asset}', 'AssetController@getById');
-    Route::put('/{asset}', 'AssetController@update');
-    Route::delete('/{asset}', 'AssetController@destroy');
-});
+Route::resource('asset', 'AssetController')->except(['edit', 'create']);
+Route::get('/asset-available-list', 'AssetController@activeList');
 
 Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
     Route::get('/', 'ReservationController@index');

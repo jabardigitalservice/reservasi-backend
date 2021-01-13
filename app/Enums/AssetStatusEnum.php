@@ -5,8 +5,8 @@ namespace App\Enums;
 use Spatie\Enum\Enum;
 
 /**
- * @method static self ACTIVE()
- * @method static self NOT_ACTIVE()
+ * @method static self active()
+ * @method static self not_active()
  */
 class AssetStatusEnum extends Enum
 {

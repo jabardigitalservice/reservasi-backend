@@ -11,6 +11,40 @@ use Illuminate\Http\Request;
 class AssetController extends Controller
 {
     /**
+     * Function to list asset, also can search filter by name and status
+     * @author SedekahCode
+     * @since Januari 2021
+     * @param Request $request
+     * @return void
+     */
+    public function index(Request $request)
+    {
+        $records = Asset::query();
+        $sortBy = $request->input('sortBy', 'created_at');
+        $orderBy = $request->input('orderBy', 'desc');
+        $perPage = $request->input('perPage', 10);
+        $perPage = $this->getPaginationSize($perPage);
+
+        // search list
+        $records = $this->searchList($request, $records);
+
+        // sort and order
+        $records->orderBy($sortBy, $orderBy);
+
+        return AssetResource::collection($records->paginate($perPage));
+    }
+
+    /**
+     * Get all data from storage
+     * @author SedekahCode
+     * @since Januari 2021
+     */
+    public function show(Asset $asset)
+    {
+        return new AssetResource($asset);
+    }
+
+    /**
      * Store a newly created resource in storage.
      * @author SedekahCode
      * @since Januari 2021
@@ -39,28 +73,6 @@ class AssetController extends Controller
     }
 
     /**
-     * Get all data from storage
-     * @author SedekahCode
-     * @since Januari 2021
-     */
-    public function getAllActive()
-    {
-        $result = Asset::where('status', 'active')->get();
-
-        return new AssetResource($result);
-    }
-
-    /**
-     * Get all data from storage
-     * @author SedekahCode
-     * @since Januari 2021
-     */
-    public function getById(Asset $asset)
-    {
-        return new AssetResource($asset);
-    }
-
-    /**
      * Function to delete (soft delete) record
      * @author SedekahCode
      * @since Januari 2021
@@ -75,27 +87,15 @@ class AssetController extends Controller
     }
 
     /**
-     * Function to list asset, also can search filter by name and status
+     * Get all data from storage
      * @author SedekahCode
      * @since Januari 2021
-     * @param Request $request
-     * @return void
      */
-    public function getList(Request $request)
+    public function activeList()
     {
-        $records = Asset::query();
-        $sortBy = $request->input('sortBy', 'created_at');
-        $orderBy = $request->input('orderBy', 'desc');
-        $perPage = $request->input('perPage', 10);
-        $perPage = $this->getPaginationSize($perPage);
+        $result = Asset::where('status', 'active')->get();
 
-        // search list
-        $records = $this->searchList($request, $records);
-
-        // sort and order
-        $records->orderBy($sortBy, $orderBy);
-
-        return AssetResource::collection($records->paginate($perPage));
+        return new AssetResource($result);
     }
 
     /**
