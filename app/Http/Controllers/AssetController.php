@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreAsetRequest;
-use App\Http\Requests\EditAsetRequest;
+use App\Http\Requests\StoreAssetRequest;
+use App\Http\Requests\EditAssetRequest;
 use App\Http\Resources\AssetResource;
 use App\Asset;
 
@@ -17,7 +17,7 @@ class AssetController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAsetRequest $request)
+    public function store(StoreAssetRequest $request)
     {
         $result = Asset::create($request->all());
 
@@ -31,7 +31,7 @@ class AssetController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(EditAsetRequest $request, Asset $asset)
+    public function update(EditAssetRequest $request, Asset $asset)
     {
         $asset->fill($request->all())->save();
 

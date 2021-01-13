@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\AssetStatusEnum;
 use Spatie\Enum\Laravel\Rules\EnumRule;
 
-class EditAsetRequest extends FormRequest
+class EditAssetRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
