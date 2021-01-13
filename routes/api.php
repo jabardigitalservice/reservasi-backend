@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'HomeController');
 
+Route::group(['middleware' => ['auth:api']], function () {
+    Route::apiResource('asset', 'AssetController');
+    Route::get('asset/list', 'ListController@index');
+});
+
 Route::group(['namespace' => 'V1'], function () {
     Route::apiResource('reservation', 'ReservationController')->except('update');
     Route::apiResource('reserved', 'ReservedController')
