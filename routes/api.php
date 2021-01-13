@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 //---ROUTE FOR ASSET---//
-Route::resource('asset', 'AssetController')->except(['edit', 'create']);
+Route::apiResource('asset', 'AssetController');
 Route::get('/asset-available-list', 'AssetController@activeList');
 
 Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
