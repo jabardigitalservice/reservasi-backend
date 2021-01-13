@@ -1,6 +1,4 @@
 <?php
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,18 +12,16 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('/', 'HomeController');
-
 Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('user', 'HomeController');
     Route::apiResource('asset', 'AssetController');
     Route::get('asset/list', 'ListController@index');
-});
-
-Route::group(['namespace' => 'V1'], function () {
-    Route::apiResource('reservation', 'ReservationController')->except('update');
-    Route::apiResource('reserved', 'ReservedController')
-        ->only(['index', 'update'])
-        ->parameters([
-            'reserved' => 'reservation',
-        ]);
+    Route::group(['namespace' => 'V1'], function () {
+        Route::apiResource('reservation', 'ReservationController')->except('update');
+        Route::apiResource('reserved', 'ReservedController')
+            ->only(['index', 'update'])
+            ->parameters([
+                'reserved' => 'reservation',
+            ]);
+    });
 });

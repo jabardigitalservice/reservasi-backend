@@ -19,7 +19,6 @@ class ReservedController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api');
         $this->middleware('can:isAdmin')->only('update');
     }
     /**
