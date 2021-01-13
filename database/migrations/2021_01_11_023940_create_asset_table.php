@@ -19,6 +19,7 @@ class CreateAssetTable extends Migration
             $table->enum('status', ['active', 'not_active']);
             $table->string('description');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -29,6 +30,9 @@ class CreateAssetTable extends Migration
      */
     public function down()
     {
+        Schema::table('asset', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('asset');
     }
 }
