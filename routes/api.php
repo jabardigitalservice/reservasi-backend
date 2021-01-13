@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('login', 'AuthenticationController')->name('login');
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('user', 'HomeController');
     Route::apiResource('asset', 'AssetController');
