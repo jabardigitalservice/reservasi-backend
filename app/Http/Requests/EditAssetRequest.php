@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\AssetStatusEnum;
+use Illuminate\Foundation\Http\FormRequest;
 use Spatie\Enum\Laravel\Rules\EnumRule;
 
 class EditAssetRequest extends FormRequest
@@ -26,7 +26,7 @@ class EditAssetRequest extends FormRequest
     public function rules()
     {
         return [
-            'status' =>  new EnumRule(AssetStatusEnum::class),
+            'status' => new EnumRule(AssetStatusEnum::class),
         ];
     }
 }

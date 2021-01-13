@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests\StoreAssetRequest;
-use App\Http\Requests\EditAssetRequest;
-use App\Http\Resources\AssetResource;
 use App\Asset;
+use App\Http\Requests\EditAssetRequest;
+use App\Http\Requests\StoreAssetRequest;
+use App\Http\Resources\AssetResource;
+use Illuminate\Http\Request;
 
 class AssetController extends Controller
 {
@@ -47,7 +47,7 @@ class AssetController extends Controller
     {
         $result = Asset::where('status', 'active')->get();
 
-        return  new AssetResource($result);
+        return new AssetResource($result);
     }
 
     /**
