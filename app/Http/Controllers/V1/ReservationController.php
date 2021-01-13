@@ -16,6 +16,18 @@ use Illuminate\Http\Request;
 class ReservationController extends Controller
 {
     /**
+     * __construct
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+        $this->middleware('can:isEmployee')->only(['store', 'destroy']);
+        $this->middleware('can:isAdmin')->only('acceptance');
+    }
+
+    /**
      * index
      *
      * @param  mixed $request

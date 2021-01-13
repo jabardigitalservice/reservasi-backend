@@ -12,17 +12,16 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
+ */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'reservation', 'namespace' => 'V1'], function () {
-    Route::get('/', 'ReservationController@index');
-    Route::post('/', 'ReservationController@store')->middleware('can:isEmployee');
-    Route::get('/{id}', 'ReservationController@show');
-    Route::get('/booking-list', 'ReservationController@bookingList');
-    Route::put('acceptance/{id}', 'ReservationController@acceptance')->middleware('can:isAdmin');
-    Route::delete('/{id}', 'ReservationController@destroy')->middleware('can:isEmployee');
+Route::group(['namespace' => 'V1'], function () {
+    Route::resource('reservation', 'ReservationController')->except(['update', 'create', 'edit']);
+    Route::group(['prefix' => 'reservation'], function () {
+        Route::get('reservation/booking-list', 'ReservationController@bookingList');
+        Route::put('reservation/acceptance/{id}', 'ReservationController@acceptance')->middleware('can:isAdmin');
+    });
 });
