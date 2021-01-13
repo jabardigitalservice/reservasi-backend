@@ -20,8 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['namespace' => 'V1'], function () {
     Route::apiResource('reservation', 'ReservationController');
-    Route::group(['prefix' => 'reservation'], function () {
-        Route::get('booking-list', 'ReservationController@bookingList');
-        Route::put('acceptance/{reservation}', 'ReservationController@acceptance')->middleware('can:isAdmin');
-    });
+    Route::apiResource('reserved', 'ReservedController');
 });
