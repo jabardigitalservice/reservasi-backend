@@ -87,18 +87,6 @@ class AssetController extends Controller
     }
 
     /**
-     * Get all data from storage
-     * @author SedekahCode
-     * @since Januari 2021
-     */
-    public function activeList()
-    {
-        $result = Asset::where('status', 'active')->get();
-
-        return new AssetResource($result);
-    }
-
-    /**
      * Function to pagination
      * @author SedekahCode
      * @since Januari 2021
