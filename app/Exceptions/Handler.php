@@ -2,7 +2,6 @@
 
 namespace App\Exceptions;
 
-use App\Traits\ApiResponser;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -12,7 +11,6 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
-    use ApiResponser;
 
     /**
      * A list of the exception types that are not reported.
@@ -72,5 +70,20 @@ class Handler extends ExceptionHandler
             $request->headers->set('Accept', 'application/json');
             return parent::render($request, $e);
         }
+    }
+
+    /**
+     * errorResponse
+     *
+     * @param  mixed $message
+     * @param  mixed $code
+     * @return void
+     */
+    protected function errorResponse($message, $code)
+    {
+        return response()->json([
+            'error' => $message,
+            'code' => $code,
+        ], $code);
     }
 }
