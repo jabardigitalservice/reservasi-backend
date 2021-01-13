@@ -26,7 +26,7 @@ RUN apk add \
         php7-intl \
         php7-json \
         php7-mbstring \
-        php7-pdo_pgsql \
+        php7-pdo_mysql \
         php7-ssh2 \
         php7-session \
         php7-xmlreader \
