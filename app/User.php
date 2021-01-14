@@ -2,9 +2,11 @@
 
 namespace App;
 
+use App\Enums\UserRoleEnum;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -36,4 +38,27 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getUser()
+    {
+        $token = json_decode(Auth::token());
+
+        $filteredRole = UserRoleEnum::employee_reservasi();
+
+        foreach ($token->realm_access->roles as $role) {
+            if (in_array($role, UserRoleEnum::getAll())) {
+                $filteredRole = $role;
+            }
+        }
+
+        $data = (object) [
+            'id' => $token->sub,
+            'name' => $token->name,
+            'username' => $token->preferred_username,
+            'email' => $token->email,
+            'role' => $filteredRole,
+        ];
+
+        return $data;
+    }
 }

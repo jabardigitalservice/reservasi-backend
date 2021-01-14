@@ -9,6 +9,7 @@ use App\Http\Requests\StoreReservation;
 use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -50,7 +51,7 @@ class ReservationController extends Controller
         $records->orderBy($sortBy, $orderBy);
 
         //check role employee reservasi
-        if ($request->user()->role === UserRoleEnum::employee_reservasi()) {
+        if (User::getUser()->role === UserRoleEnum::employee_reservasi()) {
             $records->where('user_id_reservation', $request->user()->id);
         }
 
@@ -66,7 +67,7 @@ class ReservationController extends Controller
     public function store(StoreReservation $request)
     {
         $asset = Asset::find($request->asset_id);
-        $user = $request->user();
+        $user = User::getUser();
         $reservation = Reservation::create([
             'user_id_reservation' => $user->id,
             'username' => $user->username,
