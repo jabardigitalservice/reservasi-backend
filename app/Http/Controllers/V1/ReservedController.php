@@ -9,19 +9,10 @@ use App\Models\Reservation;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Enums\ReservationStatusEnum;
 
 class ReservedController extends Controller
 {
-
-    /**
-     * __construct
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('can:isAdmin')->only('update');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -32,7 +23,7 @@ class ReservedController extends Controller
         $asset_id = $request->input('asset_id');
         $date = $request->input('date', date('Y-m-d'));
 
-        $records = Reservation::where('date', $date);
+        $records = Reservation::where('date', $date)->where('approval_status', ReservationStatusEnum::already_approved());
 
         if ($asset_id) {
             $records->where('asset_id', $asset_id);

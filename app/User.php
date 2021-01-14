@@ -39,7 +39,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function getUser()
+    public static function getUser()
     {
         $token = json_decode(Auth::token());
 

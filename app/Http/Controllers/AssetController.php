@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Asset;
+use App\Models\Asset;
 use App\Http\Requests\EditAssetRequest;
 use App\Http\Requests\StoreAssetRequest;
 use App\Http\Resources\AssetResource;

@@ -16,16 +16,6 @@ use Illuminate\Http\Request;
 class ReservationController extends Controller
 {
     /**
-     * __construct
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('can:isEmployee')->only(['store', 'destroy']);
-    }
-
-    /**
      * index
      *
      * @param  mixed $request
@@ -74,14 +64,14 @@ class ReservationController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'asset_id' => $request->asset_id,
-            'asset_name' => $asset->asset_name,
-            'asset_description' => $asset->asset_description,
+            'asset_name' => $asset->name,
+            'asset_description' => $asset->description,
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
         ]);
 
-        return ReservationResource::collection($reservation);
+        return new ReservationResource($reservation);
     }
 
     /**
@@ -136,8 +126,8 @@ class ReservationController extends Controller
         if ($request->has('asset_id')) {
             $records->where('asset_id', $request->input('asset_id'));
         }
-        if ($request->has('status')) {
-            $records->where('approval_status', 'LIKE', '%' . $request->input('status') . '%');
+        if ($request->has('approval_status')) {
+            $records->where('approval_status', 'LIKE', '%' . $request->input('approval_status') . '%');
         }
         if ($request->has('start_date')) {
             $records->where('date', '>=', Carbon::parse($request->input('start_date')));

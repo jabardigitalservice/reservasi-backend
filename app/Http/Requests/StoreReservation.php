@@ -28,12 +28,12 @@ class StoreReservation extends FormRequest
             'title' => 'required',
             'asset_id' => [
                 'required',
-                'exists:asset,id',
+                'exists:assets,id',
                 new AssetReservation($this->date, $this->start_time, $this->end_time)
             ],
             'date' => 'required|date|date_format:Y-m-d',
-            'start_time' => 'required|date|date_format:H:i',
-            'end_time' => 'required|date|date_format:H:i',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i',
         ];
     }
 

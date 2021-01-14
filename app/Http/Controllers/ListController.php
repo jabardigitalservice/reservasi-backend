@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Asset;
+use App\Models\Asset;
 use App\Http\Resources\AssetResource;
 use Illuminate\Http\Request;
 
