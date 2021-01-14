@@ -28,12 +28,12 @@ class AuthServiceProvider extends ServiceProvider
 
         /* define a admin user role */
         Gate::define('isAdmin', function ($user) {
-            return $user->role == UserRoleEnum::ADMIN();
+            return $user->role === UserRoleEnum::admin_reservasi();
         });
 
         /* define a employee user role */
         Gate::define('isEmployee', function ($user) {
-            return $user->role == UserRoleEnum::EMPLOYEE();
+            return $user->role === UserRoleEnum::employee_reservasi();
         });
     }
 }
