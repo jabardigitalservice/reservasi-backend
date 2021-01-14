@@ -18,6 +18,7 @@ class ReservationResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
+            'user_fullname' => $this->user_fullname,
             'asset_name' => $this->asset_name,
             'asset_description' => $this->asset_description,
             'date' => $this->date,

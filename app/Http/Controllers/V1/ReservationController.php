@@ -60,6 +60,7 @@ class ReservationController extends Controller
         $user = User::getUser();
         $reservation = Reservation::create([
             'user_id_reservation' => $user->id,
+            'user_fullname' => $user->name,
             'username' => $user->username,
             'title' => $request->title,
             'description' => $request->description,
