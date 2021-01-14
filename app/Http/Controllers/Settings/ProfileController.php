@@ -23,7 +23,7 @@ class ProfileController extends Controller
         $filteredRole = UserRoleEnum::employee_reservasi();
 
         foreach ($token->realm_access->roles as $role) {
-            if (in_array($role, UserRoleEnum::toArray())) {
+            if (in_array($role, UserRoleEnum::getAll())) {
                 $filteredRole = $role;
             }
         }
