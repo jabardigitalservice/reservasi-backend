@@ -24,7 +24,7 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
         $records = Reservation::query();
-        $sortBy = $request->input('sortBy', 'date');
+        $sortBy = $request->input('sortBy', 'created_at');
         $orderBy = $request->input('orderBy', 'desc');
         $perPage = $request->input('perPage', 10);
         $perPage = $this->getPaginationSize($perPage);
