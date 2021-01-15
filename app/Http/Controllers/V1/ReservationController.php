@@ -42,7 +42,7 @@ class ReservationController extends Controller
         $records = $this->sortBy($sortBy, $orderBy, $records);
 
         //check role employee reservasi
-        if (User::getUser()->role === UserRoleEnum::employee_reservasi()) {
+        if (User::getUser()->role == UserRoleEnum::employee_reservasi()) {
             $records->where('user_id_reservation', User::getUser()->id);
         }
 
