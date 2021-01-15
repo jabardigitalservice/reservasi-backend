@@ -19,7 +19,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::group(['namespace' => 'V1'], function () {
         Route::get('asset/list', 'ActiveListAssetController@index');
         Route::apiResource('asset', 'AssetController');
-        Route::apiResource('reservation', 'ReservationController')->except('update');
+        Route::apiResource('reservation', 'ReservationController');
         Route::apiResource('reserved', 'ReservedController')
             ->only(['index', 'update'])
             ->parameters([
