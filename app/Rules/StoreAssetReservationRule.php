@@ -6,7 +6,7 @@ use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
 
-class AssetReservation implements Rule
+class StoreAssetReservationRule implements Rule
 {
 
     public $start_time;

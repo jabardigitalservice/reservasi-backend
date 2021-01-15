@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Enums\ReservationStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AcceptReservation;
+use App\Http\Requests\AcceptReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Enums\ReservationStatusEnum;
 
 class ReservedController extends Controller
 {
@@ -39,7 +39,7 @@ class ReservedController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(AcceptReservation $request, Reservation $reservation)
+    public function update(AcceptReservationRequest $request, Reservation $reservation)
     {
         $reservation->approval_status = $request->approval_status;
         $reservation->note = $request->note;

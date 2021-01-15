@@ -5,7 +5,8 @@ namespace App\Http\Controllers\V1;
 use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreReservation;
+use App\Http\Requests\StoreReservationRequest;
+use App\Http\Requests\UpdateReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
@@ -54,7 +55,7 @@ class ReservationController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function store(StoreReservation $request)
+    public function store(StoreReservationRequest $request)
     {
         $asset = Asset::find($request->asset_id);
         $user = User::getUser();
@@ -70,6 +71,32 @@ class ReservationController extends Controller
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
+        ]);
+
+        return new ReservationResource($reservation);
+    }
+
+    /**
+     * update
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function update(UpdateReservationRequest $request, Reservation $reservation)
+    {
+        abort_if($reservation->approval_status != ReservationStatusEnum::NOT_YET_APPROVED(), 500, 'error');
+        $asset = Asset::find($request->asset_id);
+        $user = User::getUser();
+        $reservation = $reservation::update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'asset_id' => $request->asset_id,
+            'asset_name' => $asset->name,
+            'asset_description' => $asset->description,
+            'date' => $request->date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'user_id_updated' => $user->id
         ]);
 
         return new ReservationResource($reservation);

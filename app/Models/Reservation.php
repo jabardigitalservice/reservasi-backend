@@ -21,7 +21,8 @@ class Reservation extends Model
         'approval_status',
         'date',
         'start_time',
-        'end_time'
+        'end_time',
+        'user_id_updated'
     ];
 
     protected $dates = [
