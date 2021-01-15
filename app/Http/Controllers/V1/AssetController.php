@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
 use App\Models\Asset;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\EditAssetRequest;
 use App\Http\Requests\StoreAssetRequest;
 use App\Http\Resources\AssetResource;

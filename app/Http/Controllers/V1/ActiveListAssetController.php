@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
 use App\Models\Asset;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\AssetResource;
 use Illuminate\Http\Request;
 
-class ListController extends Controller
+class ActiveListAssetController extends Controller
 {
     /**
      * Get all data from storage
