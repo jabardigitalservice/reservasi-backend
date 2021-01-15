@@ -87,7 +87,7 @@ class ReservationController extends Controller
         abort_if($reservation->approval_status != ReservationStatusEnum::NOT_YET_APPROVED(), 500, 'error');
         $asset = Asset::find($request->asset_id);
         $user = User::getUser();
-        $reservation = $reservation::update([
+        $reservation = $reservation->update([
             'title' => $request->title,
             'description' => $request->description,
             'asset_id' => $request->asset_id,
@@ -98,8 +98,8 @@ class ReservationController extends Controller
             'end_time' => $request->end_time,
             'user_id_updated' => $user->id,
         ]);
-
-        return new ReservationResource($reservation);
+        
+        return response()->json(['message' => 'UPDATED']);
     }
 
     /**
