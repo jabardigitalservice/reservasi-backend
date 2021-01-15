@@ -28,6 +28,7 @@ class ReservationResource extends JsonResource
             'approval_date' => $this->approval_date,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'note' => $this->note,
         ];
     }
 }
