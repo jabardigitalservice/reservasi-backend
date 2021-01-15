@@ -132,7 +132,7 @@ class ReservationController extends Controller
      * @param  mixed $perPage
      * @return void
      */
-    protected function _getPaginationSize($perPage)
+    protected function getPaginationSize($perPage)
     {
         $perPageAllowed = [50, 100, 500];
 
