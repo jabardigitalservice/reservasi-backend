@@ -43,7 +43,7 @@ class ReservationController extends Controller
 
         //check role employee reservasi
         if (User::getUser()->role === UserRoleEnum::employee_reservasi()) {
-            $records->where('user_id_reservation', $request->user()->id);
+            $records->where('user_id_reservation', User::getUser()->id);
         }
 
         return ReservationResource::collection($records->paginate($perPage));
@@ -98,7 +98,7 @@ class ReservationController extends Controller
             'end_time' => $request->end_time,
             'user_id_updated' => $user->id,
         ]);
-        
+
         return response()->json(['message' => 'UPDATED']);
     }
 
