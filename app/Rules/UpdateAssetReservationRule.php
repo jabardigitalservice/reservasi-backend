@@ -39,7 +39,7 @@ class UpdateAssetReservationRule implements Rule
             ->whereTime('end_time', '<=', Carbon::parse($this->end_time))
             ->where('date', Carbon::parse($this->date))
             ->where($attribute, $value)->first();
-        return $result && $result->id === $this->id ? true : false;
+        return $result && $result->id !== $this->id ? false : true;
     }
 
     /**

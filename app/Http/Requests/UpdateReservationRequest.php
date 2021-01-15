@@ -29,11 +29,11 @@ class UpdateReservationRequest extends FormRequest
             'asset_id' => [
                 'required',
                 'exists:assets,id',
-                new UpdateAssetReservationRule($this->date, $this->start_time, $this->end_time, $this->reservation)
+                new UpdateAssetReservationRule($this->date, $this->start_time, $this->end_time, $this->reservation->id)
             ],
             'date' => 'required|date|date_format:Y-m-d',
             'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:time_start',
+            'end_time' => 'required|date_format:H:i|after:start_time',
         ];
     }
 }

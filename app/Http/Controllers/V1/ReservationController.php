@@ -39,7 +39,7 @@ class ReservationController extends Controller
         $records = $this->filterList($request, $records);
 
         //order
-        $records->orderBy($sortBy, $orderBy);
+        $records = $this->sortBy($sortBy, $orderBy, $records);
 
         //check role employee reservasi
         if (User::getUser()->role === UserRoleEnum::employee_reservasi()) {
@@ -96,7 +96,7 @@ class ReservationController extends Controller
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
-            'user_id_updated' => $user->id
+            'user_id_updated' => $user->id,
         ]);
 
         return new ReservationResource($reservation);
@@ -132,7 +132,7 @@ class ReservationController extends Controller
      * @param  mixed $perPage
      * @return void
      */
-    protected function getPaginationSize($perPage)
+    protected function _getPaginationSize($perPage)
     {
         $perPageAllowed = [50, 100, 500];
 
@@ -164,5 +164,15 @@ class ReservationController extends Controller
             $records->where('date', '<=', Carbon::parse($request->input('end_date')));
         }
         return $records;
+    }
+
+    protected function sortBy($sortBy, $orderBy, $records)
+    {
+        if ($sortBy === 'reservation_time') {
+            return $records->orderBy('date', $orderBy)
+                ->orderBy('start_time', $orderBy)
+                ->orderBy('end_time', $orderBy);
+        }
+        return $records->orderBy($sortBy, $orderBy);
     }
 }
