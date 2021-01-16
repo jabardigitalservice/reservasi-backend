@@ -28,7 +28,7 @@ class StoreReservationRequest extends FormRequest
             'title' => 'required',
             'asset_id' => [
                 'required',
-                'exists:assets,id',
+                'exists:assets,id,deleted_at,NULL',
                 new StoreAssetReservationRule($this->date, $this->start_time, $this->end_time)
             ],
             'date' => 'required|date|date_format:Y-m-d',
