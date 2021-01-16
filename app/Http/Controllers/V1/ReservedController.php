@@ -13,6 +13,16 @@ use Illuminate\Http\Request;
 
 class ReservedController extends Controller
 {
+
+    /**
+     * __construct
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('can:isAdmin')->only('update');
+    }
     /**
      * Display a listing of the resource.
      *

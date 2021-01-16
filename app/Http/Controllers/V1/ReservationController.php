@@ -16,6 +16,16 @@ use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
+
+    /**
+     * __construct
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('can:isEmployee')->only(['store', 'update']);
+    }
     /**
      * index
      *

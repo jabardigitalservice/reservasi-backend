@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\UserRoleEnum;
+use App\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -27,13 +28,13 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         /* define a admin user role */
-        Gate::define('isAdmin', function ($user) {
-            return $user->role === UserRoleEnum::admin_reservasi();
+        Gate::define('isAdmin', function () {
+            return User::getUser()->role == UserRoleEnum::admin_reservasi();
         });
 
         /* define a employee user role */
-        Gate::define('isEmployee', function ($user) {
-            return $user->role === UserRoleEnum::employee_reservasi();
+        Gate::define('isEmployee', function () {
+            return User::getUser()->role == UserRoleEnum::employee_reservasi();
         });
     }
 }
