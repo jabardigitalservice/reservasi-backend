@@ -12,6 +12,16 @@ use Illuminate\Http\Request;
 class AssetController extends Controller
 {
     /**
+     * __construct
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('can:isAdmin')->only(['store']);
+    }
+
+    /**
      * Function to list asset, also can search filter by name and status
      * @author SedekahCode
      * @since Januari 2021
