@@ -25,5 +25,6 @@ Route::group(['middleware' => ['auth:api']], function () {
             ->parameters([
                 'reserved' => 'reservation',
             ]);
+        Route::get('dashboard/reservation-statistic', 'DashboardController@reservationStatistic');
     });
 });
