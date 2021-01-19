@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $notYetApproved = Reservation::where('approval_status', ReservationStatusEnum::not_yet_approved());
         $alreadyApproved = Reservation::where('approval_status', ReservationStatusEnum::already_approved());
         $rejected = Reservation::where('approval_status', ReservationStatusEnum::rejected());
-        
+
         //check role employee reservasi
         if (User::getUser()->role == UserRoleEnum::employee_reservasi()) {
             $all->where('user_id_reservation', User::getUser()->id);
@@ -33,10 +33,10 @@ class DashboardController extends Controller
         }
         
         $statistic = [
-            'all' => $all->count(),
-            'not_yet_approved' => $notYetApproved->count(),
-            'already_approved' => $alreadyApproved->count(),
-            'rejected' => $rejected->count(),
+            'all' => $all->count('title'),
+            'not_yet_approved' => $notYetApproved->count('title'),
+            'already_approved' => $alreadyApproved->count('title'),
+            'rejected' => $rejected->count('title'),
         ];
 
         return $statistic;
