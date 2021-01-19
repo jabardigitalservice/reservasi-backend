@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Enums\ReservationStatusEnum;
+use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Reservation;
 use App\User;
-use App\Enums\UserRoleEnum;
-use App\Enums\ReservationStatusEnum;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -19,26 +19,32 @@ class DashboardController extends Controller
      */
     public function reservationStatistic(Request $request)
     {
-        $all = Reservation::query();
-        $notYetApproved = Reservation::where('approval_status', ReservationStatusEnum::not_yet_approved());
-        $alreadyApproved = Reservation::where('approval_status', ReservationStatusEnum::already_approved());
-        $rejected = Reservation::where('approval_status', ReservationStatusEnum::rejected());
-
-        //check role employee reservasi
-        if (User::getUser()->role == UserRoleEnum::employee_reservasi()) {
-            $all->where('user_id_reservation', User::getUser()->id);
-            $notYetApproved->where('user_id_reservation', User::getUser()->id);
-            $alreadyApproved->where('user_id_reservation', User::getUser()->id);
-            $rejected->where('user_id_reservation', User::getUser()->id);
-        }
-        
-        $statistic = [
-            'all' => $all->count('title'),
-            'not_yet_approved' => $notYetApproved->count('title'),
-            'already_approved' => $alreadyApproved->count('title'),
-            'rejected' => $rejected->count('title'),
+        return [
+            'all' => $this->totalReservationByStatus(),
+            'not_yet_approved' => $this->totalReservationByStatus(ReservationStatusEnum::not_yet_approved()),
+            'already_approved' => $this->totalReservationByStatus(ReservationStatusEnum::already_approved()),
+            'rejected' => $this->totalReservationByStatus(ReservationStatusEnum::rejected()),
         ];
+    }
 
-        return $statistic;
+    /**
+     * totalReservationByStatus
+     *
+     * @param  mixed $status
+     * @return void
+     */
+    public function totalReservationByStatus($status = false)
+    {
+        $record = Reservation::query();
+
+        if (User::getUser()->role == UserRoleEnum::employee_reservasi()) {
+            $record->where('user_id_reservation', User::getUser()->id);
+        }
+
+        if ($status) {
+            $record->where('approval_status', $status);
+        }
+
+        return $record->count('title');
     }
 }
