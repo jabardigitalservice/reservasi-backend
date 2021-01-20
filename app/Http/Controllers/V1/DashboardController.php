@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Enums\ReservationStatusEnum;
+use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Reservation;
 use App\User;
-use App\Enums\UserRoleEnum;
-use App\Enums\ReservationStatusEnum;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -19,20 +19,32 @@ class DashboardController extends Controller
      */
     public function reservationStatistic(Request $request)
     {
-        $reservation = Reservation::query();
+        return [
+            'all' => $this->totalReservationByStatus(),
+            'not_yet_approved' => $this->totalReservationByStatus(ReservationStatusEnum::not_yet_approved()),
+            'already_approved' => $this->totalReservationByStatus(ReservationStatusEnum::already_approved()),
+            'rejected' => $this->totalReservationByStatus(ReservationStatusEnum::rejected()),
+        ];
+    }
 
-        //check role employee reservasi
+    /**
+     * totalReservationByStatus
+     *
+     * @param  mixed $status
+     * @return void
+     */
+    public function totalReservationByStatus($status = false)
+    {
+        $record = Reservation::query();
+
         if (User::getUser()->role == UserRoleEnum::employee_reservasi()) {
-            $reservation->where('user_id_reservation', User::getUser()->id);
+            $record->where('user_id_reservation', User::getUser()->id);
         }
 
-        $statistic = [
-            'all' => $reservation->count(),
-            'not_yet_approved' => $reservation->where('approval_status', ReservationStatusEnum::not_yet_approved())->count(),
-            'already_approved' => $reservation->where('approval_status', ReservationStatusEnum::already_approved())->count(),
-            'rejected' => $reservation->where('approval_status', ReservationStatusEnum::rejected())->count(),
-        ];
+        if ($status) {
+            $record->where('approval_status', $status);
+        }
 
-        return $statistic;
+        return $record->count('title');
     }
 }
