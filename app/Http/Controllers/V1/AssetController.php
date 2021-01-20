@@ -18,7 +18,7 @@ class AssetController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('can:isAdmin')->only(['store']);
+        $this->middleware('can:isAdmin');
     }
 
     /**
