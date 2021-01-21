@@ -10,9 +10,9 @@ use App\Http\Requests\UpdateReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
@@ -52,8 +52,8 @@ class ReservationController extends Controller
         $records = $this->sortBy($sortBy, $orderBy, $records);
 
         //check role employee reservasi
-        if (User::getUser()->role == UserRoleEnum::employee_reservasi()) {
-            $records->where('user_id_reservation', User::getUser()->id);
+        if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
+            $records->where('user_id_reservation', Auth::user()->id);
         }
 
         return ReservationResource::collection($records->paginate($perPage));
@@ -68,7 +68,7 @@ class ReservationController extends Controller
     public function store(StoreReservationRequest $request)
     {
         $asset = Asset::find($request->asset_id);
-        $user = User::getUser();
+        $user = Auth::user();
         $reservation = Reservation::create([
             'user_id_reservation' => $user->id,
             'user_fullname' => $user->name,
@@ -96,7 +96,7 @@ class ReservationController extends Controller
     {
         abort_if($reservation->approval_status != ReservationStatusEnum::NOT_YET_APPROVED(), 500, 'error');
         $asset = Asset::find($request->asset_id);
-        $user = User::getUser();
+        $user = Auth::user();
         $reservation = $reservation->update([
             'title' => $request->title,
             'description' => $request->description,

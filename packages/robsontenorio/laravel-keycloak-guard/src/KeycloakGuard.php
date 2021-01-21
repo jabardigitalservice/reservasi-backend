@@ -1,11 +1,11 @@
 <?php
 namespace KeycloakGuard;
 
+use App\Enums\UserRoleEnum;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use KeycloakGuard\Exceptions\ResourceAccessNotAllowedException;
 use KeycloakGuard\Exceptions\TokenException;
 use KeycloakGuard\Exceptions\UserNotFoundException;
@@ -139,9 +139,7 @@ class KeycloakGuard implements Guard
         $user->name = optional($this->decodedToken)->name;
         $user->username = optional($this->decodedToken)->preferred_username;
         $user->email = optional($this->decodedToken)->email;
-        $user->role = Arr::first($this->getRealmRoles());
-        $user->permissions = $this->getClientRoles();
-
+        $user->role = $this->getRealmRoles();
         $this->setUser($user);
 
         return true;
@@ -203,35 +201,28 @@ class KeycloakGuard implements Guard
         return false;
     }
 
-    public function getClientRoles()
-    {
-        if (!$this->decodedToken->resource_access) {
-            return false;
-        }
-
-        $roles = [];
-
-        $resourceAccess = (array)$this->decodedToken->resource_access;
-
-        foreach ($resourceAccess as $resource) {
-            $roles = array_merge($roles, $resource->roles);
-        }
-
-        return $roles;
-    }
-
     public function getRealmRoles()
     {
         if (isset($this->decodedToken->realm_access) === false) {
             return false;
         }
+        $role = $this->getSpecificRole();
 
-        $realmAccess = $this->decodedToken->realm_access;
-
-        if (!$realmAccess->roles) {
+        if (!$role) {
             return false;
         }
 
-        return $realmAccess->roles;
+        return $role;
+    }
+
+    public function getSpecificRole()
+    {
+        $filteredRole = null;
+        foreach (optional($this->decodedToken)->realm_access->roles as $role) {
+            if (in_array($role, UserRoleEnum::getAll())) {
+                $filteredRole = $role;
+            }
+        }
+        return $filteredRole;
     }
 }
