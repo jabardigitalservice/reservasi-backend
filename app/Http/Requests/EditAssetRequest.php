@@ -26,7 +26,9 @@ class EditAssetRequest extends FormRequest
     public function rules()
     {
         return [
-            'status' => new EnumRule(AssetStatusEnum::class),
+            'name' => 'required|unique:assets,name,' . $this->asset->id . ',id,deleted_at,NULL',
+            'status' => ['required', new EnumRule(AssetStatusEnum::class)],
+            'description' => 'required',
         ];
     }
 }
