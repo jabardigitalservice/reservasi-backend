@@ -128,7 +128,7 @@ class AssetController extends Controller
             $records = $records->where('name', 'LIKE', '%' . $request->name . '%');
         }
         if ($request->has('status')) {
-            $records = $records->where('status', 'LIKE', '%' . $request->status . '%');
+            $records = $records->where('status', $request->status);
         }
 
         return $records;
