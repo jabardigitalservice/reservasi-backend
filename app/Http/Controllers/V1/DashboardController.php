@@ -6,8 +6,8 @@ use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
-use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -37,8 +37,8 @@ class DashboardController extends Controller
     {
         $record = Reservation::query();
 
-        if (User::getUser()->role == UserRoleEnum::employee_reservasi()) {
-            $record->where('user_id_reservation', User::getUser()->id);
+        if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
+            $record->where('user_id_reservation', Auth::user()->id);
         }
 
         if ($status) {
