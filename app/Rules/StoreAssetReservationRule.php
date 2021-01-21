@@ -33,15 +33,37 @@ class StoreAssetReservationRule implements Rule
      */
     public function passes($attribute, $value)
     {
+        return $this->checkAssetTime($attribute, $value, 'start_time') &&
+        $this->checkAssetTime($attribute, $value, 'end_time');
+    }
+
+    /**
+     * checkAssetTime
+     *
+     * @param  mixed $field
+     * @param  mixed $value
+     * @param  mixed $status_time
+     * @return void
+     */
+    public function checkAssetTime($field, $value, $status_time)
+    {
         $start_time = Carbon::parse($this->start_time);
         $end_time = Carbon::parse($this->end_time);
+        $record = Reservation::whereBetween('start_time', [$start_time, $end_time])
+            ->orWhereBetween('end_time', [$start_time, $end_time]);
+        switch ($status_time) {
+            case 'start_time':
+                $record->orWhereTime('start_time', '>', $start_time->addSecond(1))
+                    ->WhereTime('end_time', '<', $end_time);
+                break;
 
-        return Reservation::whereBetween('start_time', [$start_time, $end_time])
-            ->orWhereBetween('end_time', [$start_time, $end_time])
-            ->orWhereTime('start_time', '>', $start_time->addSecond(1))
-            ->WhereTime('end_time', '<', $end_time)
-            ->where('date', Carbon::parse($this->date))
-            ->where($attribute, $value)
+            case 'end_time':
+                $record->orWhereTime('start_time', '>', $start_time)
+                    ->WhereTime('end_time', '<', $end_time)->subSeconds(1);
+                break;
+        }
+        return $record->where('date', Carbon::parse($this->date))
+            ->where($field, $value)
             ->doesntExist();
     }
 
