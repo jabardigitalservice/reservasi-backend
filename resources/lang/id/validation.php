@@ -1,4 +1,5 @@
 <?php
+
 return [
     'accepted'             => 'Isian :attribute harus diterima.',
     'active_url'           => 'Isian :attribute bukan URL yang sah.',
@@ -67,4 +68,5 @@ return [
     'timezone'             => 'Isian :attribute harus berupa zona waktu yang valid.',
     'unique'               => 'Isian :attribute sudah ada sebelumnya.',
     'url'                  => 'Format isian :attribute tidak valid.',
+    'asset_used' => 'Isian :attribute telah digunakan',
 ];

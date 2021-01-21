@@ -33,10 +33,16 @@ class StoreAssetReservationRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return Reservation::whereTime('start_time', '>=', Carbon::parse($this->start_time))
-            ->whereTime('end_time', '<=', Carbon::parse($this->end_time))
+        $start_time = Carbon::parse($this->start_time);
+        $end_time = Carbon::parse($this->end_time);
+
+        return Reservation::whereBetween('start_time', [$start_time, $end_time])
+            ->orWhereBetween('end_time', [$start_time, $end_time])
+            ->orWhereTime('start_time', '>', $start_time->addSecond(1))
+            ->WhereTime('end_time', '<', $end_time)
             ->where('date', Carbon::parse($this->date))
-            ->where($attribute, $value)->doesntExist();
+            ->where($attribute, $value)
+            ->doesntExist();
     }
 
     /**
@@ -46,6 +52,6 @@ class StoreAssetReservationRule implements Rule
      */
     public function message()
     {
-        return __('validation.exists');
+        return __('validation.asset_used');
     }
 }
