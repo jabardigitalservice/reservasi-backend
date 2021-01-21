@@ -68,5 +68,5 @@ return [
     'timezone'             => 'Isian :attribute harus berupa zona waktu yang valid.',
     'unique'               => 'Isian :attribute sudah ada sebelumnya.',
     'url'                  => 'Format isian :attribute tidak valid.',
-    'asset_used' => 'Isian :attribute telah digunakan',
+    'asset_booked' => 'Isian :attribute telah dibooking',
 ];

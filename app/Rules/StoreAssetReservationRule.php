@@ -52,6 +52,6 @@ class StoreAssetReservationRule implements Rule
      */
     public function message()
     {
-        return __('validation.asset_used');
+        return __('validation.asset_booked');
     }
 }

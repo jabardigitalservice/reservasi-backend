@@ -117,7 +117,7 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
-    'asset_used' => 'The :attribute has been used',
+    'asset_booked' => 'The :attribute has been booked',
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
