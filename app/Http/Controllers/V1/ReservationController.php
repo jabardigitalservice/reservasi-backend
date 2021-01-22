@@ -53,7 +53,7 @@ class ReservationController extends Controller
 
         //check role employee reservasi
         if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
-            $records->where('user_id_reservation', Auth::user()->id);
+            $records->where('user_id_reservation', Auth::user()->uuid);
         }
 
         return ReservationResource::collection($records->paginate($perPage));
@@ -70,7 +70,7 @@ class ReservationController extends Controller
         $asset = Asset::find($request->asset_id);
         $user = Auth::user();
         $reservation = Reservation::create([
-            'user_id_reservation' => $user->id,
+            'user_id_reservation' => $user->uuid,
             'user_fullname' => $user->name,
             'username' => $user->username,
             'title' => $request->title,
@@ -106,7 +106,7 @@ class ReservationController extends Controller
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
-            'user_id_updated' => $user->id,
+            'user_id_updated' => $user->uuid,
         ]);
 
         return response()->json(['message' => 'UPDATED']);

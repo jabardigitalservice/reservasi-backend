@@ -38,7 +38,7 @@ class DashboardController extends Controller
         $record = Reservation::query();
 
         if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
-            $record->where('user_id_reservation', Auth::user()->id);
+            $record->where('user_id_reservation', Auth::user()->uuid);
         }
 
         if ($status) {
