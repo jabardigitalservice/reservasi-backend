@@ -30,7 +30,8 @@ class Reservation extends Model
         'updated_at',
         'deleted_at',
         'start_time',
-        'end_time'
+        'end_time',
+        'approval_date'
     ];
 
     public function getSomeDateAttribute($date)

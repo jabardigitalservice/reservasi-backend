@@ -7,9 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AcceptReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReservedController extends Controller
 {
@@ -55,7 +55,7 @@ class ReservedController extends Controller
         $reservation->approval_status = $request->approval_status;
         $reservation->note = $request->note;
         $reservation->approval_date = Carbon::now();
-        $reservation->user_id_updated = User::getUser()->id;
+        $reservation->user_id_updated = Auth::user()->id;
         $reservation->save();
         return new ReservationResource($reservation);
     }
