@@ -47,11 +47,14 @@ class StoreAssetReservationRule implements Rule
         }
         $start_time = $this->convertTime(collect($record)->min('start_time'));
         $end_time = $this->convertTime(collect($record)->max('end_time'));
+        $start_time_max = $this->convertTime(collect($record)->max('start_time'));
+        $end_time_min = $this->convertTime(collect($record)->min('end_time'));
         $reqStartTime = $this->convertTime($this->start_time);
         $reqEndTime = $this->convertTime($this->end_time);
         if (
             ($reqStartTime <= $start_time && $reqEndTime >= $end_time) ||
-            ($reqStartTime >= $start_time && $reqEndTime <= $end_time)
+            ($reqStartTime >= $start_time && $reqEndTime <= $end_time) ||
+            ($reqStartTime == $start_time_max && $reqEndTime == $end_time_min )
         ) {
             $isEmptyAsset = false;
         }
