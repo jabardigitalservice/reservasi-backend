@@ -32,8 +32,8 @@ class UpdateReservationRequest extends FormRequest
                 new UpdateAssetReservationRule($this->date, $this->start_time, $this->end_time, $this->reservation->id)
             ],
             'date' => 'required|date|date_format:Y-m-d',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
+            'start_time' => 'required|date|date_format:Y-m-d H:i',
+            'end_time' => 'required|date|date_format:Y-m-d H:i|after:start_time',
         ];
     }
 }

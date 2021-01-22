@@ -28,8 +28,8 @@ class CreateReservationsTable extends Migration
             $table->string('asset_name');
             $table->string('asset_description')->nullable();
             $table->date('date');
-            $table->time('start_time');
-            $table->time('end_time');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
             $table->enum('approval_status', ['not_yet_approved', 'already_approved', 'rejected'])
                 ->default('not_yet_approved');
             $table->dateTime('approval_date')

@@ -33,38 +33,37 @@ class StoreAssetReservationRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return $this->checkAssetTime($attribute, $value, 'start_time') &&
-        $this->checkAssetTime($attribute, $value, 'end_time');
-    }
-
-    /**
-     * checkAssetTime
-     *
-     * @param  mixed $field
-     * @param  mixed $value
-     * @param  mixed $status_time
-     * @return void
-     */
-    public function checkAssetTime($field, $value, $status_time)
-    {
         $start_time = Carbon::parse($this->start_time);
         $end_time = Carbon::parse($this->end_time);
+        $isEmptyAsset = false;
         $record = Reservation::whereBetween('start_time', [$start_time, $end_time])
-            ->orWhereBetween('end_time', [$start_time, $end_time]);
-        switch ($status_time) {
-            case 'start_time':
-                $record->orWhereTime('start_time', '>', $start_time->addSecond(1))
-                    ->WhereTime('end_time', '<', $end_time);
-                break;
-
-            case 'end_time':
-                $record->orWhereTime('start_time', '>', $start_time)
-                    ->WhereTime('end_time', '<', $end_time)->subSeconds(1);
-                break;
+            ->orWhereBetween('end_time', [$start_time, $end_time])
+            ->where($attribute, $value)
+        // ->where('approval_status', ReservationStatusEnum::already_approved())
+            ->get();
+        if (!count($record)) {
+            return true;
         }
-        return $record->where('date', Carbon::parse($this->date))
-            ->where($field, $value)
-            ->doesntExist();
+        $start_time = $this->decimalHours(Carbon::parse(collect($record)->min('start_time'))
+                ->format('H:i:s'));
+        $end_time = $this->decimalHours(Carbon::parse(collect($record)->max('end_time'))
+                ->format('H:i:s'));
+        $reqStartTime = $this->decimalHours(Carbon::parse($this->start_time)
+                ->format('H:i:s'));
+        $reqEndTime = $this->decimalHours(Carbon::parse($this->end_time)
+                ->format('H:i:s'));
+        if (($start_time > $reqStartTime && $reqStartTime < $end_time) || ($end_time > $reqEndTime && $reqEndTime < $end_time)) {
+            $isEmptyAsset = true;
+        }
+        dd('Req: ' . $reqStartTime . ' s/d ' . $reqEndTime . ' DB: ' . $start_time . ' s/d ' . $end_time);
+        // dd($isEmptyAsset);
+        return $isEmptyAsset;
+    }
+
+    public function decimalHours($time)
+    {
+        $hms = explode(":", $time);
+        return ($hms[0] + ($hms[1] / 60) + ($hms[2] / 3600));
     }
 
     /**

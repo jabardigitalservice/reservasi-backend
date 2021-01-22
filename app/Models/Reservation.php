@@ -28,7 +28,9 @@ class Reservation extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
+        'start_time',
+        'end_time'
     ];
 
     public function getSomeDateAttribute($date)
