@@ -39,7 +39,8 @@ class StoreAssetReservationRule implements Rule
         $record = Reservation::whereBetween('start_time', [$start_time, $end_time])
             ->orWhereBetween('end_time', [$start_time, $end_time])
             ->where($attribute, $value)
-        // ->where('approval_status', ReservationStatusEnum::already_approved()) [masih dipakai jika ada perubahan proses bisnis]
+        // [masih dipakai jika ada perubahan proses bisnis]
+        // ->where('approval_status', ReservationStatusEnum::already_approved())
             ->get();
         if (!count($record)) {
             return true;
@@ -48,8 +49,10 @@ class StoreAssetReservationRule implements Rule
         $end_time = $this->convertTime(collect($record)->max('end_time'));
         $reqStartTime = $this->convertTime($this->start_time);
         $reqEndTime = $this->convertTime($this->end_time);
-        if (($reqStartTime <= $start_time && $reqEndTime >= $end_time) ||
-            ($reqStartTime >= $start_time && $reqEndTime <= $end_time)) {
+        if (
+            ($reqStartTime <= $start_time && $reqEndTime >= $end_time) ||
+            ($reqStartTime >= $start_time && $reqEndTime <= $end_time)
+        ) {
             $isEmptyAsset = false;
         }
         return $isEmptyAsset;
@@ -74,6 +77,6 @@ class StoreAssetReservationRule implements Rule
      */
     public function message()
     {
-        return __('validation.asset_booked');
+        return __('validation.asset_reserved');
     }
 }
