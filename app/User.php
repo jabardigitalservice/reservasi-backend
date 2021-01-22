@@ -38,27 +38,4 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public static function getUser()
-    {
-        $token = json_decode(Auth::token());
-
-        $filteredRole = UserRoleEnum::employee_reservasi();
-
-        foreach ($token->realm_access->roles as $role) {
-            if (in_array($role, UserRoleEnum::getAll())) {
-                $filteredRole = $role;
-            }
-        }
-
-        $data = (object) [
-            'id' => $token->sub,
-            'name' => $token->name,
-            'username' => $token->preferred_username,
-            'email' => $token->email,
-            'role' => $filteredRole,
-        ];
-
-        return $data;
-    }
 }

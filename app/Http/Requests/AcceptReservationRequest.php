@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use Illuminate\Foundation\Http\FormRequest;
-use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class AcceptReservationRequest extends FormRequest
 {
@@ -16,7 +16,7 @@ class AcceptReservationRequest extends FormRequest
      */
     public function authorize()
     {
-        return User::getUser()->role == UserRoleEnum::admin_reservasi();
+        return Auth::user()->role == UserRoleEnum::admin_reservasi();
     }
 
     /**

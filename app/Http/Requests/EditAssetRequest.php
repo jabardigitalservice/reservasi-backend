@@ -28,7 +28,6 @@ class EditAssetRequest extends FormRequest
         return [
             'name' => 'required|unique:assets,name,' . $this->asset->id . ',id,deleted_at,NULL',
             'status' => ['required', new EnumRule(AssetStatusEnum::class)],
-            'description' => 'required',
         ];
     }
 }
