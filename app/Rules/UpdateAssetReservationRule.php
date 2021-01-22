@@ -21,8 +21,8 @@ class UpdateAssetReservationRule implements Rule
     public function __construct($date, $start_time, $end_time, $id)
     {
         $this->date = $date;
-        $this->start_time = $start_time;
-        $this->end_time = $end_time;
+        $this->start_time = Carbon::parse($start_time);
+        $this->end_time = Carbon::parse($end_time);
         $this->id = $id;
     }
 
@@ -35,17 +35,37 @@ class UpdateAssetReservationRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        $start_time = Carbon::parse($this->start_time);
-        $end_time = Carbon::parse($this->end_time);
+        $isAvailable = true;
+        $reservations = Reservation::where($attribute, $value)
+            ->where(function ($query) {
+                $query->whereBetween('start_time', [$this->start_time, $this->end_time])
+                      ->orWhereBetween('end_time', [$this->start_time, $this->end_time]);
+            })
+            ->where('id', '!=', $this->id)
+            ->get();
+        if (!count($reservations)) {
+            return true;
+        }
+        
+        $requestStartTime = Reservation::convertTime($this->start_time);
+        $requestEndTime = Reservation::convertTime($this->end_time);
 
-        $result = Reservation::whereBetween('start_time', [$start_time, $end_time])
-            ->orWhereBetween('end_time', [$start_time, $end_time])
-            ->orWhereTime('start_time', '>', $start_time->addSecond(1))
-            ->WhereTime('end_time', '<', $end_time)
-            ->where('date', Carbon::parse($this->date))
-            ->where($attribute, $value)
-            ->first();
-        return $result && $result->id !== $this->id ? false : true;
+        //find complement set and set of slices
+        foreach ($reservations as $reservedAsset) {
+            $complement = (
+                $requestStartTime <= $reservedAsset->converted_start_time && 
+                $requestEndTime >= $reservedAsset->converted_end_time
+            );
+            $slices = (
+                $requestStartTime >= $reservedAsset->converted_start_time && 
+                $requestEndTime <= $reservedAsset->converted_end_time
+            );
+            if ($complement || $slices) {
+                $isAvailable = false;
+                break;
+            }
+        }
+        return $isAvailable;
     }
 
     /**
@@ -55,6 +75,6 @@ class UpdateAssetReservationRule implements Rule
      */
     public function message()
     {
-        return __('validation.asset_booked');
+        return __('validation.asset_reserved');
     }
 }

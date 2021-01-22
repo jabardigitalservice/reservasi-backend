@@ -20,8 +20,8 @@ class StoreAssetReservationRule implements Rule
     public function __construct($date, $start_time, $end_time)
     {
         $this->date = $date;
-        $this->start_time = $start_time;
-        $this->end_time = $end_time;
+        $this->start_time = Carbon::parse($start_time);
+        $this->end_time = Carbon::parse($end_time);
     }
 
     /**
@@ -33,44 +33,36 @@ class StoreAssetReservationRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        $start_time = Carbon::parse($this->start_time);
-        $end_time = Carbon::parse($this->end_time);
-        $isEmptyAsset = true;
-        $record = Reservation::whereBetween('start_time', [$start_time, $end_time])
-            ->orWhereBetween('end_time', [$start_time, $end_time])
-            ->where($attribute, $value)
-        // [masih dipakai jika ada perubahan proses bisnis]
-        // ->where('approval_status', ReservationStatusEnum::already_approved())
+        $isAvailable = true;
+        $reservations = Reservation::where($attribute, $value)
+            ->where(function ($query) {
+                $query->whereBetween('start_time', [$this->start_time, $this->end_time])
+                      ->orWhereBetween('end_time', [$this->start_time, $this->end_time]);
+            })
             ->get();
-        if (!count($record)) {
+        if (!count($reservations)) {
             return true;
         }
-        $start_time = $this->convertTime(collect($record)->min('start_time'));
-        $end_time = $this->convertTime(collect($record)->max('end_time'));
-        $start_time_max = $this->convertTime(collect($record)->max('start_time'));
-        $end_time_min = $this->convertTime(collect($record)->min('end_time'));
-        $reqStartTime = $this->convertTime($this->start_time);
-        $reqEndTime = $this->convertTime($this->end_time);
-        if (
-            ($reqStartTime <= $start_time && $reqEndTime >= $end_time) ||
-            ($reqStartTime >= $start_time && $reqEndTime <= $end_time) ||
-            ($reqStartTime == $start_time_max && $reqEndTime == $end_time_min )
-        ) {
-            $isEmptyAsset = false;
+        
+        $requestStartTime = Reservation::convertTime($this->start_time);
+        $requestEndTime = Reservation::convertTime($this->end_time);
+
+        //find complement set and set of slices
+        foreach ($reservations as $reservedAsset) {
+            $complement = (
+                $requestStartTime <= $reservedAsset->converted_start_time && 
+                $requestEndTime >= $reservedAsset->converted_end_time
+            );
+            $slices = (
+                $requestStartTime >= $reservedAsset->converted_start_time && 
+                $requestEndTime <= $reservedAsset->converted_end_time
+            );
+            if ($complement || $slices) {
+                $isAvailable = false;
+                break;
+            }
         }
-        return $isEmptyAsset;
-    }
-
-    public function convertTime($time)
-    {
-        return $this->decimalHours(Carbon::parse($time)
-                ->format('H:i:s'));
-    }
-
-    public function decimalHours($time)
-    {
-        $hms = explode(":", $time);
-        return ($hms[0] + ($hms[1] / 60) + ($hms[2] / 3600));
+        return $isAvailable;
     }
 
     /**

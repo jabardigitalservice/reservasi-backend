@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class Reservation extends Model
 {
@@ -34,8 +35,30 @@ class Reservation extends Model
         'approval_date'
     ];
 
-    public function getSomeDateAttribute($date)
+    protected $appends = [
+        'converted_start_time',
+        'converted_end_time',
+    ];
+
+    public function getConvertedStartTimeAttribute()
     {
-        return $date->format('Y-m-d H:i:s');
+        return self::convertTime($this->start_time);
+    }
+
+    public function getConvertedEndTimeAttribute()
+    {
+        return self::convertTime($this->end_time);
+    }
+
+    static function convertTime($time)
+    {
+        return self::decimalHours(Carbon::parse($time)
+                ->format('H:i:s'));
+    }
+
+    static function decimalHours($time)
+    {
+        $hms = explode(':', $time);
+        return ($hms[0] + ($hms[1] / 60) + ($hms[2] / 3600));
     }
 }
