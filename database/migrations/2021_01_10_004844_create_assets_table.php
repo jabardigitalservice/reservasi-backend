@@ -17,7 +17,7 @@ class CreateAssetsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->enum('status', ['active', 'not_active']);
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

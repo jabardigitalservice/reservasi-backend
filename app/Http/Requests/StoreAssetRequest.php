@@ -28,7 +28,6 @@ class StoreAssetRequest extends FormRequest
         return [
             'name' => 'required|unique:assets,name',
             'status' => ['required', new EnumValueRule(AssetStatusEnum::class)],
-            'description' => 'required',
         ];
     }
 }
