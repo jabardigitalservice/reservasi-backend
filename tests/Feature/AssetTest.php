@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\User;
 use App\Models\Asset;
 
-class UserTest extends TestCase
+class AssetTest extends TestCase
 {
      use RefreshDatabase;
      private $user;
@@ -61,7 +61,7 @@ class UserTest extends TestCase
         ];
 
         // 2. Hit Api Endpoint
-        $response = $this->actingAs($admin)->get(route('asset.store', 1), $data);
+        $response = $this->actingAs($admin)->get(route('asset.store'), $data);
         // 3. Verify and Assertion
         $response->assertStatus(401);
     }
