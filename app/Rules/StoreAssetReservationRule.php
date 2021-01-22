@@ -35,7 +35,7 @@ class StoreAssetReservationRule implements Rule
     {
         $start_time = Carbon::parse($this->start_time);
         $end_time = Carbon::parse($this->end_time);
-        $isEmptyAsset = false;
+        $isEmptyAsset = true;
         $record = Reservation::whereBetween('start_time', [$start_time, $end_time])
             ->orWhereBetween('end_time', [$start_time, $end_time])
             ->where($attribute, $value)
@@ -44,20 +44,24 @@ class StoreAssetReservationRule implements Rule
         if (!count($record)) {
             return true;
         }
-        $start_time = $this->decimalHours(Carbon::parse(collect($record)->min('start_time'))
-                ->format('H:i:s'));
-        $end_time = $this->decimalHours(Carbon::parse(collect($record)->max('end_time'))
-                ->format('H:i:s'));
-        $reqStartTime = $this->decimalHours(Carbon::parse($this->start_time)
-                ->format('H:i:s'));
-        $reqEndTime = $this->decimalHours(Carbon::parse($this->end_time)
-                ->format('H:i:s'));
-        if (($start_time > $reqStartTime && $reqStartTime < $end_time) || ($end_time > $reqEndTime && $reqEndTime < $end_time)) {
-            $isEmptyAsset = true;
+        $start_time = $this->convertTime(collect($record)->min('start_time'));
+        $end_time = $this->convertTime(collect($record)->max('end_time'));
+        $reqStartTime = $this->convertTime($this->start_time);
+        $reqEndTime = $this->convertTime($this->end_time);
+        if (($reqStartTime <= $start_time && $reqEndTime >= $end_time) ||
+            ($reqStartTime >= $start_time && $reqEndTime <= $end_time)) {
+            $isEmptyAsset = false;
         }
-        dd('Req: ' . $reqStartTime . ' s/d ' . $reqEndTime . ' DB: ' . $start_time . ' s/d ' . $end_time);
-        // dd($isEmptyAsset);
+        // dd('Req: ' . $reqStartTime . ' s/d ' . $reqEndTime . ' DB: ' . $start_time . ' s/d ' . $end_time);
+        // dd("Kasus 1 : Req: 13 s/d 14 DB: 14 s/d 15, Kasus 2 : Req: 15 s/d 16 DB: 14 s/d 15");
+        // dd("Kasus 2 : Req: 15 s/d 16 DB: 14 s/d 15");
         return $isEmptyAsset;
+    }
+
+    public function convertTime($time)
+    {
+        return $this->decimalHours(Carbon::parse($time)
+                ->format('H:i:s'));
     }
 
     public function decimalHours($time)
