@@ -39,7 +39,7 @@ class StoreAssetReservationRule implements Rule
         $record = Reservation::whereBetween('start_time', [$start_time, $end_time])
             ->orWhereBetween('end_time', [$start_time, $end_time])
             ->where($attribute, $value)
-        // ->where('approval_status', ReservationStatusEnum::already_approved())
+        // ->where('approval_status', ReservationStatusEnum::already_approved()) [masih dipakai jika ada perubahan proses bisnis]
             ->get();
         if (!count($record)) {
             return true;
@@ -52,9 +52,6 @@ class StoreAssetReservationRule implements Rule
             ($reqStartTime >= $start_time && $reqEndTime <= $end_time)) {
             $isEmptyAsset = false;
         }
-        // dd('Req: ' . $reqStartTime . ' s/d ' . $reqEndTime . ' DB: ' . $start_time . ' s/d ' . $end_time);
-        // dd("Kasus 1 : Req: 13 s/d 14 DB: 14 s/d 15, Kasus 2 : Req: 15 s/d 16 DB: 14 s/d 15");
-        // dd("Kasus 2 : Req: 15 s/d 16 DB: 14 s/d 15");
         return $isEmptyAsset;
     }
 
