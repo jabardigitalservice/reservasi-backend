@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::get('/', 'HomeController');
+Route::put('/send-email', 'ReservedController@sendEmail');
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('user', 'Settings\ProfileController@index');
