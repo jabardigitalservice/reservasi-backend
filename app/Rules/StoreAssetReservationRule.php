@@ -40,7 +40,7 @@ class StoreAssetReservationRule implements Rule
                 $query->whereBetween('start_time', [$this->start_time, $this->end_time])
                     ->orWhereBetween('end_time', [$this->start_time, $this->end_time]);
             })
-            ->where('approval_status', ReservationStatusEnum::already_approved())
+            ->approvalStatus(ReservationStatusEnum::already_approved())
             ->get();
         if (!count($reservations)) {
             return true;

@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\UserRoleEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class Reservation extends Model
 {
@@ -50,15 +52,31 @@ class Reservation extends Model
         return self::convertTime($this->end_time);
     }
 
-    static function convertTime($time)
+    public static function convertTime($time)
     {
         return self::decimalHours(Carbon::parse($time)
                 ->format('H:i:s'));
     }
 
-    static function decimalHours($time)
+    public static function decimalHours($time)
     {
         $hms = explode(':', $time);
         return ($hms[0] + ($hms[1] / 60) + ($hms[2] / 3600));
+    }
+
+    public function scopeCheckRoleEmployee($query)
+    {
+        if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
+            return $query->where('user_id_reservation', Auth::user()->uuid);
+        }
+        return $query;
+    }
+
+    public function scopeApprovalStatus($query, $approval_status = null)
+    {
+        if ($approval_status) {
+            return $query->where('approval_status', $approval_status);
+        }
+        return $query;
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V1;
 
 use App\Enums\ReservationStatusEnum;
-use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
@@ -34,7 +33,7 @@ class ReservationController extends Controller
      */
     public function index(Request $request)
     {
-        $records = Reservation::query();
+        $records = Reservation::checkRoleEmployee();
         $sortBy = $request->input('sortBy', 'created_at');
         $orderBy = $request->input('orderBy', 'desc');
         $perPage = $request->input('perPage', 10);
@@ -51,11 +50,6 @@ class ReservationController extends Controller
         //order
         $records = $this->sortBy($sortBy, $orderBy, $records);
 
-        //check role employee reservasi
-        if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
-            $records->where('user_id_reservation', Auth::user()->uuid);
-        }
-
         return ReservationResource::collection($records->paginate($perPage));
     }
 
@@ -68,20 +62,14 @@ class ReservationController extends Controller
     public function store(StoreReservationRequest $request)
     {
         $asset = Asset::find($request->asset_id);
-        $user = Auth::user();
-        $reservation = Reservation::create([
-            'user_id_reservation' => $user->uuid,
-            'user_fullname' => $user->name,
-            'username' => $user->username,
-            'title' => $request->title,
-            'description' => $request->description,
-            'asset_id' => $request->asset_id,
+        $request->request->add([
+            'user_id_reservation' => $request->user()->uuid,
+            'user_fullname' => $request->user()->name,
+            'username' => $request->user()->username,
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
-            'date' => $request->date,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
         ]);
+        $reservation = Reservation::create($request->all());
 
         return new ReservationResource($reservation);
     }
@@ -96,18 +84,12 @@ class ReservationController extends Controller
     {
         abort_if($reservation->approval_status != ReservationStatusEnum::not_yet_approved(), 500, 'error');
         $asset = Asset::find($request->asset_id);
-        $user = Auth::user();
-        $reservation = $reservation->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'asset_id' => $request->asset_id,
+        $request->request->add([
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
-            'date' => $request->date,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'user_id_updated' => $user->uuid,
+            'user_id_updated' => $request->user()->uuid
         ]);
+        $reservation->update($request->all());
 
         return response()->json(['message' => 'UPDATED']);
     }
@@ -120,7 +102,7 @@ class ReservationController extends Controller
      */
     public function destroy(Reservation $reservation)
     {
-        abort_if($reservation->approval_status != ReservationStatusEnum::NOT_YET_APPROVED(), 500, 'error');
+        abort_if($reservation->approval_status != ReservationStatusEnum::not_yet_approved(), 500, 'error');
         $reservation->delete();
         return response()->json(['message' => 'DELETED']);
     }
@@ -168,14 +150,22 @@ class ReservationController extends Controller
             $records->where('approval_status', 'LIKE', '%' . $request->input('approval_status') . '%');
         }
         if ($request->has('start_date')) {
-            $records->where('date', '>=', Carbon::parse($request->input('start_date')));
+            $records->whereDate('date', '>=', Carbon::parse($request->input('start_date')));
         }
         if ($request->has('end_date')) {
-            $records->where('date', '<=', Carbon::parse($request->input('end_date')));
+            $records->whereDate('date', '<=', Carbon::parse($request->input('end_date')));
         }
         return $records;
     }
 
+    /**
+     * sortBy
+     *
+     * @param  mixed $sortBy
+     * @param  mixed $orderBy
+     * @param  mixed $records
+     * @return void
+     */
     protected function sortBy($sortBy, $orderBy, $records)
     {
         if ($sortBy === 'reservation_time') {

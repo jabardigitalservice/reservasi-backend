@@ -9,7 +9,6 @@ use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ReservedController extends Controller
 {
@@ -31,9 +30,9 @@ class ReservedController extends Controller
     public function index(Request $request)
     {
         $asset_id = $request->input('asset_id');
-        $date = $request->input('date', date('Y-m-d'));
+        $date = $request->input('date');
 
-        $records = Reservation::where('date', $date)
+        $records = Reservation::whereDate('date', Carbon::parse($date))
             ->whereIn('approval_status', [
                 ReservationStatusEnum::already_approved(),
                 ReservationStatusEnum::not_yet_approved(),
@@ -55,11 +54,11 @@ class ReservedController extends Controller
      */
     public function update(AcceptReservationRequest $request, Reservation $reservation)
     {
-        $reservation->approval_status = $request->approval_status;
-        $reservation->note = $request->note;
-        $reservation->approval_date = Carbon::now();
-        $reservation->user_id_updated = Auth::user()->uuid;
-        $reservation->save();
+        $request->request->add([
+            'approval_date' => Carbon::now(),
+            'user_id_updated' => $request->user()->uuid
+        ]);
+        $reservation->fill($request->all())->save();
         return new ReservationResource($reservation);
     }
 }

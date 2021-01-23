@@ -43,7 +43,7 @@ class UpdateAssetReservationRule implements Rule
                     ->orWhereBetween('end_time', [$this->start_time, $this->end_time]);
             })
             ->where('id', '!=', $this->id)
-            ->where('approval_status', ReservationStatusEnum::already_approved())
+            ->approvalStatus(ReservationStatusEnum::already_approved())
             ->get();
         if (!count($reservations)) {
             return true;
