@@ -103,7 +103,7 @@ class ReservationController extends Controller
     {
         abort_if($reservation->approval_status != ReservationStatusEnum::not_yet_approved(), 500, 'error');
         $reservation->delete();
-        return response()->json(['message' => 'DELETED']);
+        return response()->json(['message' => 'Reservation record deleted.']);
     }
 
     /**
