@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Enums\ReservationStatusEnum;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
@@ -39,25 +40,26 @@ class UpdateAssetReservationRule implements Rule
         $reservations = Reservation::where($attribute, $value)
             ->where(function ($query) {
                 $query->whereBetween('start_time', [$this->start_time, $this->end_time])
-                      ->orWhereBetween('end_time', [$this->start_time, $this->end_time]);
+                    ->orWhereBetween('end_time', [$this->start_time, $this->end_time]);
             })
             ->where('id', '!=', $this->id)
+            ->where('approval_status', ReservationStatusEnum::already_approved())
             ->get();
         if (!count($reservations)) {
             return true;
         }
-        
+
         $requestStartTime = Reservation::convertTime($this->start_time);
         $requestEndTime = Reservation::convertTime($this->end_time);
 
         //find complement set and set of slices
         foreach ($reservations as $reservedAsset) {
             $complement = (
-                $requestStartTime <= $reservedAsset->converted_start_time && 
+                $requestStartTime <= $reservedAsset->converted_start_time &&
                 $requestEndTime >= $reservedAsset->converted_end_time
             );
             $slices = (
-                $requestStartTime >= $reservedAsset->converted_start_time && 
+                $requestStartTime >= $reservedAsset->converted_start_time &&
                 $requestEndTime <= $reservedAsset->converted_end_time
             );
             if ($complement || $slices) {

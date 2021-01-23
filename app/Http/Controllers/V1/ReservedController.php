@@ -34,7 +34,10 @@ class ReservedController extends Controller
         $date = $request->input('date', date('Y-m-d'));
 
         $records = Reservation::where('date', $date)
-            ->where('approval_status', ReservationStatusEnum::already_approved());
+            ->whereIn('approval_status', [
+                ReservationStatusEnum::already_approved(),
+                ReservationStatusEnum::not_yet_approved(),
+            ]);
 
         if ($asset_id) {
             $records->where('asset_id', $asset_id);

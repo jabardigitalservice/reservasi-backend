@@ -94,7 +94,7 @@ class ReservationController extends Controller
      */
     public function update(UpdateReservationRequest $request, Reservation $reservation)
     {
-        abort_if($reservation->approval_status != ReservationStatusEnum::NOT_YET_APPROVED(), 500, 'error');
+        abort_if($reservation->approval_status != ReservationStatusEnum::not_yet_approved(), 500, 'error');
         $asset = Asset::find($request->asset_id);
         $user = Auth::user();
         $reservation = $reservation->update([
