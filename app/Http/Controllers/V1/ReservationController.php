@@ -89,9 +89,8 @@ class ReservationController extends Controller
             'asset_description' => $asset->description,
             'user_id_updated' => $request->user()->uuid
         ]);
-        $reservation->update($request->all());
-
-        return response()->json(['message' => 'UPDATED']);
+        $reservation->fill($request->all())->save();
+        return new ReservationResource($reservation);
     }
 
     /**
