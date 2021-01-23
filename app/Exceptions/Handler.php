@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -59,20 +60,30 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e)
     {
-        if ($e instanceof AuthenticationException) {
-            return $this->errorResponse('Unauthenticated', 401);
-        } elseif ($e instanceof ModelNotFoundException) {
-            return $this->errorResponse('Object Not Found', 404);
-        } elseif ($e instanceof NotFoundHttpException) {
-            return $this->errorResponse('Url Not Found', 404);
-        } else if ($e instanceof HttpException) {
-            return $this->errorResponse($e->getMessage(), $e->getStatusCode());
+        if ($messageError = $this->errorException($e)) {
+            return $messageError;
         } else {
             $request->headers->set('Accept', 'application/json');
             return parent::render($request, $e);
         }
     }
 
+    protected function errorException(Throwable $e)
+    {
+        $error = null;
+        if ($e instanceof AuthenticationException) {
+            $error = $this->errorResponse('Unauthenticated', 401);
+        } elseif ($e instanceof ModelNotFoundException) {
+            $error = $this->errorResponse('Object Not Found', 404);
+        } elseif ($e instanceof NotFoundHttpException) {
+            $error = $this->errorResponse('Url Not Found', 404);
+        } elseif ($e instanceof HttpException) {
+            $error = $this->errorResponse($e->getMessage(), $e->getStatusCode());
+        } elseif ($e instanceof AuthorizationException) {
+            $error = $this->errorResponse($e->getMessage(), 403);
+        }
+        return $error;
+    }
     /**
      * errorResponse
      *
