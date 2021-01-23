@@ -82,7 +82,7 @@ class ReservationController extends Controller
      */
     public function update(UpdateReservationRequest $request, Reservation $reservation)
     {
-        abort_if($reservation->approval_status != ReservationStatusEnum::not_yet_approved(), 500, __('validation.asset_modified'));
+        abort_if($reservation->notYetApproved(), 500, __('validation.asset_modified'));
         $asset = Asset::find($request->asset_id);
         $request->request->add([
             'asset_name' => $asset->name,
@@ -101,7 +101,7 @@ class ReservationController extends Controller
      */
     public function destroy(Reservation $reservation)
     {
-        abort_if($reservation->approval_status != ReservationStatusEnum::not_yet_approved(), 500, __('validation.asset_modified'));
+        abort_if($reservation->notYetApproved(), 500, __('validation.asset_modified'));
         $reservation->delete();
         return response()->json(['message' => 'Reservation record deleted.']);
     }

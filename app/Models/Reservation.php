@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -78,5 +79,10 @@ class Reservation extends Model
             return $query->where('approval_status', $approval_status);
         }
         return $query;
+    }
+
+    public function notYetApproved()
+    {
+        return $this->approval_status != ReservationStatusEnum::not_yet_approved();
     }
 }
