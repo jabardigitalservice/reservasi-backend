@@ -6,6 +6,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Mockery\Exception\InvalidOrderException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -64,9 +65,9 @@ class Handler extends ExceptionHandler
             return $this->errorResponse('Object Not Found', 404);
         } elseif ($e instanceof NotFoundHttpException) {
             return $this->errorResponse('Url Not Found', 404);
+        } else if ($e instanceof HttpException) {
+            return $this->errorResponse($e->getMessage(), $e->getStatusCode());
         } else {
-            // ref: https://stackoverflow.com/a/35319899
-            //return self::response_error($e->getMessage(), 500);
             $request->headers->set('Accept', 'application/json');
             return parent::render($request, $e);
         }
