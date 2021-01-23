@@ -118,6 +118,7 @@ return [
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
     'asset_reserved' => 'The :attribute has been reserved',
+    'asset_modified' => 'Reservation data can be modified if the status has not been approved',
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
