@@ -36,6 +36,4 @@ class StoreReservationRequest extends FormRequest
             'end_time' => 'required|date|date_format:Y-m-d H:i|after:start_time',
         ];
     }
-
-
 }

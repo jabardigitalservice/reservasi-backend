@@ -10,4 +10,6 @@ use Spatie\Enum\Enum;
  * @method static self rejected()
  */
 
-final class ReservationStatusEnum extends Enum {}
+final class ReservationStatusEnum extends Enum
+{
+}
