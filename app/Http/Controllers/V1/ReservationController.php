@@ -13,6 +13,8 @@ use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationStoreMail;
 
 class ReservationController extends Controller
 {
@@ -69,10 +71,12 @@ class ReservationController extends Controller
     {
         $asset = Asset::find($request->asset_id);
         $user = Auth::user();
+        
         $reservation = Reservation::create([
             'user_id_reservation' => $user->id,
             'user_fullname' => $user->name,
             'username' => $user->username,
+            'email' => $user->email,
             'title' => $request->title,
             'description' => $request->description,
             'asset_id' => $request->asset_id,
@@ -82,7 +86,7 @@ class ReservationController extends Controller
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
         ]);
-
+        Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
         return new ReservationResource($reservation);
     }
 
