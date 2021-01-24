@@ -43,6 +43,17 @@ class Reservation extends Model
         'converted_end_time',
     ];
 
+    public const VALIDATION_RULES = [
+        'title' => 'required',
+        'asset_id' => [
+            'required',
+            'exists:assets,id,deleted_at,NULL'
+        ],
+        'date' => 'required|date|date_format:Y-m-d',
+        'start_time' => 'required|date|date_format:Y-m-d H:i',
+        'end_time' => 'required|date|date_format:Y-m-d H:i|after:start_time',
+    ];
+
     public function getConvertedStartTimeAttribute()
     {
         return self::convertTime($this->start_time);
@@ -51,18 +62,6 @@ class Reservation extends Model
     public function getConvertedEndTimeAttribute()
     {
         return self::convertTime($this->end_time);
-    }
-
-    public static function convertTime($time)
-    {
-        return self::decimalHours(Carbon::parse($time)
-                ->format('H:i:s'));
-    }
-
-    public static function decimalHours($time)
-    {
-        $hms = explode(':', $time);
-        return ($hms[0] + ($hms[1] / 60) + ($hms[2] / 3600));
     }
 
     public function scopeCheckRoleEmployee($query)
@@ -81,8 +80,28 @@ class Reservation extends Model
         return $query;
     }
 
+    public function scopeActionUpdated($query, $id)
+    {
+        if ($id) {
+            return $query->where('id', '!=', $this->id);
+        }
+        return $query;
+    }
+
     public function notYetApproved()
     {
         return $this->approval_status != ReservationStatusEnum::not_yet_approved();
+    }
+
+    public static function convertTime($time)
+    {
+        return self::decimalHours(Carbon::parse($time)
+                ->format('H:i:s'));
+    }
+
+    public static function decimalHours($time)
+    {
+        $hms = explode(':', $time);
+        return ($hms[0] + ($hms[1] / 60) + ($hms[2] / 3600));
     }
 }

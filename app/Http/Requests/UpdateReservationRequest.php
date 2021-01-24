@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Reservation;
+use App\Rules\AssetReservationRule;
 use App\Rules\UpdateAssetReservationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,16 +26,13 @@ class UpdateReservationRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'title' => 'required',
-            'asset_id' => [
-                'required',
-                'exists:assets,id,deleted_at,NULL',
-                new UpdateAssetReservationRule($this->date, $this->start_time, $this->end_time, $this->reservation->id)
-            ],
-            'date' => 'required|date|date_format:Y-m-d',
-            'start_time' => 'required|date|date_format:Y-m-d H:i',
-            'end_time' => 'required|date|date_format:Y-m-d H:i|after:start_time',
-        ];
+        $rules = Reservation::VALIDATION_RULES;
+        $rules['asset_id'][] = new AssetReservationRule(
+            $this->date,
+            $this->start_time,
+            $this->end_time,
+            $this->reservation->id
+        );
+        return $rules;
     }
 }
