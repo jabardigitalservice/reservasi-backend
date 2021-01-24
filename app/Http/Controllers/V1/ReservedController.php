@@ -29,6 +29,10 @@ class ReservedController extends Controller
      */
     public function index(Request $request)
     {
+        $request->validate([
+            'asset_id' => 'required|exists:assets,id,deleted_at,NULL',
+            'date' => 'required|date|Y-m-d'
+        ]);
         $asset_id = $request->input('asset_id');
         $date = $request->input('date');
 
@@ -36,13 +40,11 @@ class ReservedController extends Controller
             ->whereIn('approval_status', [
                 ReservationStatusEnum::already_approved(),
                 ReservationStatusEnum::not_yet_approved(),
-            ]);
+            ])
+            ->where('asset_id', $asset_id)
+            ->get();
 
-        if ($asset_id) {
-            $records->where('asset_id', $asset_id);
-        }
-
-        return ReservationResource::collection($records->get());
+        return ReservationResource::collection($records);
     }
 
     /**
