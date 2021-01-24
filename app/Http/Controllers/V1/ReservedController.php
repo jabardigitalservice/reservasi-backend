@@ -31,7 +31,7 @@ class ReservedController extends Controller
     {
         $request->validate([
             'asset_id' => 'required|exists:assets,id,deleted_at,NULL',
-            'date' => 'required|date|Y-m-d'
+            'date' => 'required|date|date_format:Y-m-d'
         ]);
         $asset_id = $request->input('asset_id');
         $date = $request->input('date');
