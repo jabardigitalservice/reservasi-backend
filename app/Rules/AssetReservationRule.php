@@ -59,8 +59,8 @@ class AssetReservationRule implements Rule
      */
     public function findComplementSlices($reservations)
     {
-        $this->start_time = Reservation::convertTime($this->start_time);
-        $this->end_time = Reservation::convertTime($this->end_time);
+        $this->start_time = Reservation::convertTimeToDecimal($this->start_time);
+        $this->end_time = Reservation::convertTimeToDecimal($this->end_time);
 
         foreach ($reservations as $reservation) {
             $complement = (

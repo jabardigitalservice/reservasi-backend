@@ -38,11 +38,6 @@ class Reservation extends Model
         'approval_date'
     ];
 
-    protected $appends = [
-        'converted_start_time',
-        'converted_end_time',
-    ];
-
     public const VALIDATION_RULES = [
         'title' => 'required',
         'asset_id' => [
@@ -56,12 +51,12 @@ class Reservation extends Model
 
     public function getConvertedStartTimeAttribute()
     {
-        return self::convertTime($this->start_time);
+        return self::convertTimeToDecimal($this->start_time);
     }
 
     public function getConvertedEndTimeAttribute()
     {
-        return self::convertTime($this->end_time);
+        return self::convertTimeToDecimal($this->end_time);
     }
 
     public function scopeCheckRoleEmployee($query)
@@ -93,10 +88,11 @@ class Reservation extends Model
         return $this->approval_status != ReservationStatusEnum::not_yet_approved();
     }
 
-    public static function convertTime($time)
+    public static function convertTimeToDecimal($time)
     {
-        return self::decimalHours(Carbon::parse($time)
-                ->format('H:i:s'));
+        return self::decimalHours(
+            Carbon::parse($time)->format('H:i:s')
+        );
     }
 
     public static function decimalHours($time)
