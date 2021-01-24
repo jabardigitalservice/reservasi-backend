@@ -14,6 +14,7 @@ class Reservation extends Model
         'user_fullname',
         'username',
         'title',
+        'email',
         'description',
         'asset_id',
         'asset_name',
