@@ -26,9 +26,8 @@ class StoreAssetRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:assets,name',
+            'name' => 'required|unique:assets,name,NULL,id,deleted_at,NULL',
             'status' => ['required', new EnumValueRule(AssetStatusEnum::class)],
-            'description' => 'required',
         ];
     }
 }
