@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\Reservation;
 use App\Rules\AssetReservationRule;
-use App\Rules\UpdateAssetReservationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateReservationRequest extends FormRequest
