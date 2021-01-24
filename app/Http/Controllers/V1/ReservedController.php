@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ReservationApprovalStatus;
+use App\Mail\ReservationApprovalMail;
 
 class ReservedController extends Controller
 {
@@ -59,7 +59,7 @@ class ReservedController extends Controller
         $reservation->user_id_updated = Auth::user()->id;
         $reservation->save();
         
-        Mail::to($reservation->email)->send(new ReservationApprovalStatus($reservation, $request->approval_status));
+        Mail::to($reservation->email)->send(new ReservationApprovalMail($reservation));
         return new ReservationResource($reservation);
     }
 }
