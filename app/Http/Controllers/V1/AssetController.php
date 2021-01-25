@@ -32,6 +32,7 @@ class AssetController extends Controller
     {
         $records = Asset::query();
         $sortBy = $request->input('sortBy', 'created_at');
+        $sortByStatus = $request->input('sortBy', 'status');
         $orderBy = $request->input('orderBy', 'desc');
         $perPage = $request->input('perPage', 10);
         $perPage = $this->getPaginationSize($perPage);
@@ -40,7 +41,8 @@ class AssetController extends Controller
         $records = $this->searchList($request, $records);
 
         // sort and order
-        $records->orderBy($sortBy, $orderBy);
+        $records->orderBy($sortByStatus)
+            ->orderBy($sortBy, $orderBy);
 
         return AssetResource::collection($records->paginate($perPage));
     }
