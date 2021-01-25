@@ -133,9 +133,8 @@ class KeycloakGuard implements Guard
             $class = $this->provider->getModel();
             $user = new $class();
 
-            $user->id = $this->decodedToken->sub;
+            $user->uuid = $this->decodedToken->sub;
         }
-
         $user->name = optional($this->decodedToken)->name;
         $user->username = optional($this->decodedToken)->preferred_username;
         $user->email = optional($this->decodedToken)->email;

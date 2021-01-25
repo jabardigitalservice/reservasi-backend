@@ -5,8 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreReservationRequest;
-use App\Http\Requests\UpdateReservationRequest;
+use App\Http\Requests\ReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
@@ -53,9 +52,8 @@ class ReservationController extends Controller
         //order
         $records = $this->sortBy($sortBy, $orderBy, $records);
 
-        //check role employee reservasi
-        if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
-            $records->where('user_id_reservation', Auth::user()->id);
+        if ($request->user()->role == UserRoleEnum::employee_reservasi()) {
+            $records->byUser($request->user());
         }
 
         return ReservationResource::collection($records->paginate($perPage));
@@ -67,25 +65,18 @@ class ReservationController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function store(StoreReservationRequest $request)
+    public function store(ReservationRequest $request)
     {
         $asset = Asset::find($request->asset_id);
-        $user = Auth::user();
-        
-        $reservation = Reservation::create([
-            'user_id_reservation' => $user->id,
-            'user_fullname' => $user->name,
-            'username' => $user->username,
-            'email' => $user->email,
-            'title' => $request->title,
-            'description' => $request->description,
-            'asset_id' => $request->asset_id,
+        $request->request->add([
+            'user_id_reservation' => $request->user()->uuid,
+            'user_fullname' => $request->user()->name,
+            'username' => $request->user()->username,
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
-            'date' => $request->date,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
         ]);
+        $reservation = Reservation::create($request->all());
+
         Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
         return new ReservationResource($reservation);
     }
@@ -96,24 +87,17 @@ class ReservationController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function update(UpdateReservationRequest $request, Reservation $reservation)
+    public function update(ReservationRequest $request, Reservation $reservation)
     {
-        abort_if($reservation->approval_status != ReservationStatusEnum::NOT_YET_APPROVED(), 500, 'error');
+        abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
         $asset = Asset::find($request->asset_id);
-        $user = Auth::user();
-        $reservation = $reservation->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'asset_id' => $request->asset_id,
+        $request->request->add([
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
-            'date' => $request->date,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'user_id_updated' => $user->id,
+            'user_id_updated' => $request->user()->uuid
         ]);
-
-        return response()->json(['message' => 'UPDATED']);
+        $reservation->fill($request->all())->save();
+        return new ReservationResource($reservation);
     }
 
     /**
@@ -124,9 +108,9 @@ class ReservationController extends Controller
      */
     public function destroy(Reservation $reservation)
     {
-        abort_if($reservation->approval_status != ReservationStatusEnum::NOT_YET_APPROVED(), 500, 'error');
+        abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
         $reservation->delete();
-        return response()->json(['message' => 'DELETED']);
+        return response()->json(['message' => 'Reservation record deleted.']);
     }
 
     /**
@@ -172,14 +156,22 @@ class ReservationController extends Controller
             $records->where('approval_status', 'LIKE', '%' . $request->input('approval_status') . '%');
         }
         if ($request->has('start_date')) {
-            $records->where('date', '>=', Carbon::parse($request->input('start_date')));
+            $records->whereDate('date', '>=', Carbon::parse($request->input('start_date')));
         }
         if ($request->has('end_date')) {
-            $records->where('date', '<=', Carbon::parse($request->input('end_date')));
+            $records->whereDate('date', '<=', Carbon::parse($request->input('end_date')));
         }
         return $records;
     }
 
+    /**
+     * sortBy
+     *
+     * @param  mixed $sortBy
+     * @param  mixed $orderBy
+     * @param  mixed $records
+     * @return void
+     */
     protected function sortBy($sortBy, $orderBy, $records)
     {
         if ($sortBy === 'reservation_time') {

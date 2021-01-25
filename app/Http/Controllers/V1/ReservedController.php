@@ -32,16 +32,22 @@ class ReservedController extends Controller
      */
     public function index(Request $request)
     {
+        $request->validate([
+            'asset_id' => 'required|exists:assets,id,deleted_at,NULL',
+            'date' => 'required|date|date_format:Y-m-d'
+        ]);
         $asset_id = $request->input('asset_id');
-        $date = $request->input('date', date('Y-m-d'));
+        $date = $request->input('date');
 
-        $records = Reservation::where('date', $date)->where('approval_status', ReservationStatusEnum::already_approved());
+        $records = Reservation::whereDate('date', $date)
+            ->whereIn('approval_status', [
+                ReservationStatusEnum::already_approved(),
+                ReservationStatusEnum::not_yet_approved(),
+            ])
+            ->where('asset_id', $asset_id)
+            ->get();
 
-        if ($asset_id) {
-            $records->where('asset_id', $asset_id);
-        }
-
-        return ReservationResource::collection($records->get());
+        return ReservationResource::collection($records);
     }
 
     /**
@@ -53,12 +59,11 @@ class ReservedController extends Controller
      */
     public function update(AcceptReservationRequest $request, Reservation $reservation)
     {
-        $reservation->approval_status = $request->approval_status;
-        $reservation->note = $request->note;
-        $reservation->approval_date = Carbon::now();
-        $reservation->user_id_updated = Auth::user()->id;
-        $reservation->save();
-        
+        $request->request->add([
+            'approval_date' => Carbon::now(),
+            'user_id_updated' => $request->user()->uuid
+        ]);
+        $reservation->fill($request->all())->save();
         Mail::to($reservation->email)->send(new ReservationApprovalMail($reservation));
         return new ReservationResource($reservation);
     }
