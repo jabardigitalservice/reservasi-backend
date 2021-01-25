@@ -6,8 +6,6 @@ Melalui surat elektronik ini, kami memberitahukan bahwa ada data reservasi yang 
 - Catatan Kegiatan: {{ $reservation->description }}
 - Tanggal dan Waktu Kegiatan: {{ $reservation->start_time }} sd. {{ $reservation->end_time }}
 - Tanggal Dibuat: {{ $reservation->created_at }}
-- Status Persetujuan: {{ $reservation->approval_status }}
-- Catatan Persetujuan: {{ $reservation->note }}
 
 @component('mail::button', ['url' => $url])
 Lihat Reservasi
