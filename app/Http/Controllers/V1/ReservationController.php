@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\V1;
 
 use App\Enums\ReservationStatusEnum;
+use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreReservationRequest;
-use App\Http\Requests\UpdateReservationRequest;
+use App\Http\Requests\ReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Models\Asset;
 use App\Models\Reservation;
@@ -33,7 +33,7 @@ class ReservationController extends Controller
      */
     public function index(Request $request)
     {
-        $records = Reservation::checkRoleEmployee();
+        $records = Reservation::query();
         $sortBy = $request->input('sortBy', 'created_at');
         $orderBy = $request->input('orderBy', 'desc');
         $perPage = $request->input('perPage', 10);
@@ -50,6 +50,10 @@ class ReservationController extends Controller
         //order
         $records = $this->sortBy($sortBy, $orderBy, $records);
 
+        if ($request->user()->role == UserRoleEnum::employee_reservasi()) {
+            $records->byUser($request->user());
+        }
+
         return ReservationResource::collection($records->paginate($perPage));
     }
 
@@ -59,7 +63,7 @@ class ReservationController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function store(StoreReservationRequest $request)
+    public function store(ReservationRequest $request)
     {
         $asset = Asset::find($request->asset_id);
         $request->request->add([
@@ -80,9 +84,9 @@ class ReservationController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function update(UpdateReservationRequest $request, Reservation $reservation)
+    public function update(ReservationRequest $request, Reservation $reservation)
     {
-        abort_if($reservation->notYetApproved(), 500, __('validation.asset_modified'));
+        abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
         $asset = Asset::find($request->asset_id);
         $request->request->add([
             'asset_name' => $asset->name,
@@ -101,7 +105,7 @@ class ReservationController extends Controller
      */
     public function destroy(Reservation $reservation)
     {
-        abort_if($reservation->notYetApproved(), 500, __('validation.asset_modified'));
+        abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
         $reservation->delete();
         return response()->json(['message' => 'Reservation record deleted.']);
     }

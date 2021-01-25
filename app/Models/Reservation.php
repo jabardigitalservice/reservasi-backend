@@ -38,17 +38,6 @@ class Reservation extends Model
         'approval_date'
     ];
 
-    public const VALIDATION_RULES = [
-        'title' => 'required',
-        'asset_id' => [
-            'required',
-            'exists:assets,id,deleted_at,NULL'
-        ],
-        'date' => 'required|date|date_format:Y-m-d',
-        'start_time' => 'required|date|date_format:Y-m-d H:i',
-        'end_time' => 'required|date|date_format:Y-m-d H:i|after:start_time',
-    ];
-
     public function scopeCheckRoleEmployee($query)
     {
         if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
@@ -57,23 +46,27 @@ class Reservation extends Model
         return $query;
     }
 
-    public function scopeApprovalStatus($query, $approval_status = null)
+    public function scopeByUser($query, $user)
     {
-        if ($approval_status) {
-            return $query->where('approval_status', $approval_status);
-        }
-        return $query;
+        return $query->where('user_id_reservation', $user->uuid);
     }
 
-    public function scopeActionUpdated($query, $id)
+    public function scopeNotYetApproved($query)
     {
-        if ($id) {
-            return $query->where('id', '!=', $this->id);
-        }
-        return $query;
+        return $query->where('approval_status', ReservationStatusEnum::not_yet_approved());
     }
 
-    public function notYetApproved()
+    public function scopeAlreadyApproved($query)
+    {
+        return $query->where('approval_status', ReservationStatusEnum::already_approved());
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('approval_status', ReservationStatusEnum::rejected());
+    }
+
+    public function getIsNotYetApprovedAttribute()
     {
         return $this->approval_status != ReservationStatusEnum::not_yet_approved();
     }

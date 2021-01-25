@@ -45,8 +45,12 @@ class AssetReservationRule implements Rule
                 $query->where('start_time', '<=', $this->start_time)
                     ->where('end_time', '>=', $this->end_time);
             })
-            ->approvalStatus(ReservationStatusEnum::already_approved())
-            ->actionUpdated($this->id);
+            ->alreadyApproved()
+            ->where(function ($query) {
+                if ($this->id) {
+                    $query->where('id', '!=', $this->id);
+                }
+            });
         return $reservations->doesntExist();
     }
 
