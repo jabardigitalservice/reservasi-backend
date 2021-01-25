@@ -37,11 +37,11 @@ class AssetReservationRule implements Rule
     public function passes($attribute, $value)
     {
         $reservations = Reservation::where($attribute, $value)
-            ->where(function($query){
+            ->where(function ($query) {
                 $query->where('start_time', '>=', $this->start_time)
                     ->where('end_time', '<=', $this->end_time);
             })
-            ->orWhere(function($query){
+            ->orWhere(function ($query) {
                 $query->where('start_time', '<=', $this->start_time)
                     ->where('end_time', '>=', $this->end_time);
             })
