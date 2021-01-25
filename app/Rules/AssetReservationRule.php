@@ -50,7 +50,7 @@ class AssetReservationRule implements Rule
                         ->whereTime('end_time', '>=', $this->end_time);
                 });
             })
-            // ->alreadyApproved()
+            ->alreadyApproved()
             ->where(function ($query) {
                 if ($this->id) {
                     $query->where('id', '!=', $this->id);
