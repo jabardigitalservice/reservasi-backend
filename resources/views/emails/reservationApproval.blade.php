@@ -7,7 +7,7 @@ Melalui surat elektronik ini, berdasarkan data reservasi yang kami terima yaitu:
 - Catatan Kegiatan: {{ $reservation->description }}
 - Tanggal dan Waktu Kegiatan: {{ $reservation->start_time }} sd. {{ $reservation->end_time }}
 - Tanggal Dibuat: {{ $reservation->created_at }}
-- Status Persetujuan: {{ $reservation->approval_status }}
+- Status Persetujuan: {{ $status }}
 - Catatan Persetujuan: {{ $reservation->note }}
 
 @component('mail::button', ['url' => $url])
