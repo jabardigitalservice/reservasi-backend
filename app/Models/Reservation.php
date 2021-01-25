@@ -49,16 +49,6 @@ class Reservation extends Model
         'end_time' => 'required|date|date_format:Y-m-d H:i|after:start_time',
     ];
 
-    public function getConvertedStartTimeAttribute()
-    {
-        return self::convertTimeToDecimal($this->start_time);
-    }
-
-    public function getConvertedEndTimeAttribute()
-    {
-        return self::convertTimeToDecimal($this->end_time);
-    }
-
     public function scopeCheckRoleEmployee($query)
     {
         if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
@@ -86,18 +76,5 @@ class Reservation extends Model
     public function notYetApproved()
     {
         return $this->approval_status != ReservationStatusEnum::not_yet_approved();
-    }
-
-    public static function convertTimeToDecimal($time)
-    {
-        return self::decimalHours(
-            Carbon::parse($time)->format('H:i:s')
-        );
-    }
-
-    public static function decimalHours($time)
-    {
-        $hms = explode(':', $time);
-        return ($hms[0] + ($hms[1] / 60) + ($hms[2] / 3600));
     }
 }
