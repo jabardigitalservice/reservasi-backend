@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use App\Enums\ReservationStatusEnum;
-use App\Enums\UserRoleEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 class Reservation extends Model
 {
@@ -18,6 +16,7 @@ class Reservation extends Model
         'user_fullname',
         'username',
         'title',
+        'email',
         'description',
         'asset_id',
         'asset_name',
@@ -37,14 +36,6 @@ class Reservation extends Model
         'end_time',
         'approval_date'
     ];
-
-    public function scopeCheckRoleEmployee($query)
-    {
-        if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
-            return $query->where('user_id_reservation', Auth::user()->uuid);
-        }
-        return $query;
-    }
 
     public function scopeByUser($query, $user)
     {

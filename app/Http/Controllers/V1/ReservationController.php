@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationRequest;
@@ -11,7 +10,8 @@ use App\Models\Asset;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationStoreMail;
 
 class ReservationController extends Controller
 {
@@ -70,11 +70,13 @@ class ReservationController extends Controller
             'user_id_reservation' => $request->user()->uuid,
             'user_fullname' => $request->user()->name,
             'username' => $request->user()->username,
+            'email' => $request->user()->email,
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
         ]);
         $reservation = Reservation::create($request->all());
 
+        Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
         return new ReservationResource($reservation);
     }
 
