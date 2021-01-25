@@ -2,7 +2,6 @@
 
 namespace App\Rules;
 
-use App\Enums\ReservationStatusEnum;
 use App\Models\Reservation;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Carbon;
@@ -38,14 +37,20 @@ class AssetReservationRule implements Rule
     {
         $reservations = Reservation::where($attribute, $value)
             ->where(function ($query) {
-                $query->whereTime('start_time', '>=', $this->start_time)
-                    ->whereTime('end_time', '<=', $this->end_time);
+                $query->whereBetween('start_time', [$this->start_time, $this->end_time])
+                    ->orWhereBetween('end_time', [$this->start_time, $this->end_time]);
             })
-            ->orWhere(function ($query) {
-                $query->whereTime('start_time', '<=', $this->start_time)
-                    ->whereTime('end_time', '>=', $this->end_time);
+            ->where(function ($query) {
+                $query->where(function ($query) {
+                    $query->whereTime('start_time', '>=', $this->start_time)
+                        ->whereTime('end_time', '<=', $this->end_time);
+                })
+                ->orWhere(function ($query) {
+                    $query->whereTime('start_time', '<=', $this->start_time)
+                        ->whereTime('end_time', '>=', $this->end_time);
+                });
             })
-            ->alreadyApproved()
+            // ->alreadyApproved()
             ->where(function ($query) {
                 if ($this->id) {
                     $query->where('id', '!=', $this->id);
