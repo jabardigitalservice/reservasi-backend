@@ -38,12 +38,12 @@ class AssetReservationRule implements Rule
     {
         $reservations = Reservation::where($attribute, $value)
             ->where(function ($query) {
-                $query->where('start_time', '>=', $this->start_time)
-                    ->where('end_time', '<=', $this->end_time);
+                $query->whereTime('start_time', '>=', $this->start_time)
+                    ->whereTime('end_time', '<=', $this->end_time);
             })
             ->orWhere(function ($query) {
-                $query->where('start_time', '<=', $this->start_time)
-                    ->where('end_time', '>=', $this->end_time);
+                $query->whereTime('start_time', '<=', $this->start_time)
+                    ->whereTime('end_time', '>=', $this->end_time);
             })
             ->alreadyApproved()
             ->where(function ($query) {
