@@ -66,14 +66,13 @@ class ReservationController extends Controller
     public function store(ReservationRequest $request)
     {
         $asset = Asset::find($request->asset_id);
-        $request->request->add([
+        $reservation = Reservation::create($request->all() + [
             'user_id_reservation' => $request->user()->uuid,
             'user_fullname' => $request->user()->name,
             'username' => $request->user()->username,
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
         ]);
-        $reservation = Reservation::create($request->all());
 
         return new ReservationResource($reservation);
     }
@@ -88,12 +87,11 @@ class ReservationController extends Controller
     {
         abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
         $asset = Asset::find($request->asset_id);
-        $request->request->add([
+        $reservation->fill($request->all() + [
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
             'user_id_updated' => $request->user()->uuid
-        ]);
-        $reservation->fill($request->all())->save();
+        ])->save();
         return new ReservationResource($reservation);
     }
 
