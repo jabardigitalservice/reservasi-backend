@@ -2,10 +2,12 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Mockery\Exception\InvalidOrderException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -58,20 +60,30 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e)
     {
-        if ($e instanceof AuthenticationException) {
-            return $this->errorResponse('Unauthenticated', 401);
-        } elseif ($e instanceof ModelNotFoundException) {
-            return $this->errorResponse('Object Not Found', 404);
-        } elseif ($e instanceof NotFoundHttpException) {
-            return $this->errorResponse('Url Not Found', 404);
+        if ($messageError = $this->errorException($e)) {
+            return $messageError;
         } else {
-            // ref: https://stackoverflow.com/a/35319899
-            //return self::response_error($e->getMessage(), 500);
             $request->headers->set('Accept', 'application/json');
             return parent::render($request, $e);
         }
     }
 
+    protected function errorException(Throwable $e)
+    {
+        $error = null;
+        if ($e instanceof AuthenticationException) {
+            $error = $this->errorResponse('Unauthenticated', 401);
+        } elseif ($e instanceof ModelNotFoundException) {
+            $error = $this->errorResponse('Object Not Found', 404);
+        } elseif ($e instanceof NotFoundHttpException) {
+            $error = $this->errorResponse('Url Not Found', 404);
+        } elseif ($e instanceof HttpException) {
+            $error = $this->errorResponse($e->getMessage(), $e->getStatusCode());
+        } elseif ($e instanceof AuthorizationException) {
+            $error = $this->errorResponse($e->getMessage(), 403);
+        }
+        return $error;
+    }
     /**
      * errorResponse
      *

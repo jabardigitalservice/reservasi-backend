@@ -12,7 +12,7 @@ class AddUserFullnameAtReservationsTable extends Migration
      * @return void
      */
     public function up()
-    {        
+    {
         Schema::table('reservations', function (Blueprint $table) {
             $table->string('user_fullname')->after('user_id_reservation');
         });
