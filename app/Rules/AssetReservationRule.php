@@ -44,9 +44,14 @@ class AssetReservationRule implements Rule
                 ->orWhere(function ($query) {
                     $query->whereTime('start_time', '<', $this->end_time)
                         ->whereTime('end_time', '>', $this->end_time);
-                });
+                })
+                ->orWhere(function ($query) {
+                    $query->whereTime('start_time', '>=', $this->start_time)
+                        ->whereTime('end_time', '<=', $this->end_time);
+                })
+                ;
             })
-            ->alreadyApproved()
+            // ->alreadyApproved()
             ->where(function ($query) {
                 if ($this->id) {
                     $query->where('id', '!=', $this->id);

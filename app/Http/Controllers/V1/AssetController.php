@@ -144,7 +144,7 @@ class AssetController extends Controller
      */
     protected function sortByStatus($sortBy, $orderBy, $records)
     {
-        if ($sortBy !== 'created_at') {
+        if ($sortBy == 'name') {
             $records->orderBy('status', 'asc');
         }
 
