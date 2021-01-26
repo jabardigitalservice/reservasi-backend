@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Models\Asset;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EditAssetRequest;
 use App\Http\Requests\StoreAssetRequest;
 use App\Http\Resources\AssetResource;
+use App\Models\Asset;
 use Illuminate\Http\Request;
 
 class AssetController extends Controller
@@ -31,8 +31,7 @@ class AssetController extends Controller
     public function index(Request $request)
     {
         $records = Asset::query();
-        $sortBy = $request->input('sortBy', 'created_at');
-        $sortByStatus = $request->input('sortBy', 'status');
+        $sortBy = $request->input('sortBy', 'name');
         $orderBy = $request->input('orderBy', 'desc');
         $perPage = $request->input('perPage', 10);
         $perPage = $this->getPaginationSize($perPage);
@@ -41,8 +40,7 @@ class AssetController extends Controller
         $records = $this->searchList($request, $records);
 
         // sort and order
-        $records->orderBy($sortByStatus)
-            ->orderBy($sortBy, $orderBy);
+        $records = $this->sortByStatus($sortBy, $orderBy, $records);
 
         return AssetResource::collection($records->paginate($perPage));
     }
@@ -134,5 +132,22 @@ class AssetController extends Controller
         }
 
         return $records;
+    }
+
+    /**
+     * Function to sort by status
+     *
+     * @param [String] $sortBy
+     * @param [String] $orderBy
+     * @param [Array] $records
+     * @return void
+     */
+    protected function sortByStatus($sortBy, $orderBy, $records)
+    {
+        if ($sortBy !== 'created_at') {
+            $records->orderBy('status', 'asc');
+        }
+
+        return $records->orderBy($sortBy, $orderBy);
     }
 }
