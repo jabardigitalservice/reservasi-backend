@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\ReservationStatusEnum;
+use App\Enums\UserRoleEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class Reservation extends Model
 {
@@ -29,11 +33,41 @@ class Reservation extends Model
         'created_at',
         'updated_at',
         'deleted_at',
+        'start_time',
+        'end_time',
         'approval_date'
     ];
 
-    public function getSomeDateAttribute($date)
+    public function scopeCheckRoleEmployee($query)
     {
-        return $date->format('Y-m-d H:i:s');
+        if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
+            return $query->where('user_id_reservation', Auth::user()->uuid);
+        }
+        return $query;
+    }
+
+    public function scopeByUser($query, $user)
+    {
+        return $query->where('user_id_reservation', $user->uuid);
+    }
+
+    public function scopeNotYetApproved($query)
+    {
+        return $query->where('approval_status', ReservationStatusEnum::not_yet_approved());
+    }
+
+    public function scopeAlreadyApproved($query)
+    {
+        return $query->where('approval_status', ReservationStatusEnum::already_approved());
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('approval_status', ReservationStatusEnum::rejected());
+    }
+
+    public function getIsNotYetApprovedAttribute()
+    {
+        return $this->approval_status != ReservationStatusEnum::not_yet_approved();
     }
 }

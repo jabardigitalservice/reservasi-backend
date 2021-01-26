@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -19,32 +17,22 @@ class DashboardController extends Controller
      */
     public function reservationStatistic(Request $request)
     {
+        $all = Reservation::query();
+        $not_yet_approved = Reservation::notYetApproved();
+        $already_approved = Reservation::alreadyApproved();
+        $rejected = Reservation::rejected();
+
+        if ($request->user()->role == UserRoleEnum::employee_reservasi()) {
+            $all->byUser($request->user());
+            $not_yet_approved->byUser($request->user());
+            $already_approved->byUser($request->user());
+            $rejected->byUser($request->user());
+        }
         return [
-            'all' => $this->totalReservationByStatus(),
-            'not_yet_approved' => $this->totalReservationByStatus(ReservationStatusEnum::not_yet_approved()),
-            'already_approved' => $this->totalReservationByStatus(ReservationStatusEnum::already_approved()),
-            'rejected' => $this->totalReservationByStatus(ReservationStatusEnum::rejected()),
+            'all' => $all->count('username'),
+            'not_yet_approved' => $not_yet_approved->count('username'),
+            'already_approved' => $already_approved->count('username'),
+            'rejected' => $rejected->count('username')
         ];
-    }
-
-    /**
-     * totalReservationByStatus
-     *
-     * @param  mixed $status
-     * @return void
-     */
-    public function totalReservationByStatus($status = false)
-    {
-        $record = Reservation::query();
-
-        if (Auth::user()->role == UserRoleEnum::employee_reservasi()) {
-            $record->where('user_id_reservation', Auth::user()->id);
-        }
-
-        if ($status) {
-            $record->where('approval_status', $status);
-        }
-
-        return $record->count('title');
     }
 }
