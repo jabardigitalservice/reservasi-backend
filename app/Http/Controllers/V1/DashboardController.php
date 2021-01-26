@@ -22,7 +22,7 @@ class DashboardController extends Controller
         $already_approved = Reservation::alreadyApproved();
         $rejected = Reservation::rejected();
 
-        if($request->user()->role == UserRoleEnum::employee_reservasi()) {
+        if ($request->user()->role == UserRoleEnum::employee_reservasi()) {
             $all->byUser($request->user());
             $not_yet_approved->byUser($request->user());
             $already_approved->byUser($request->user());
