@@ -2,14 +2,13 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Model;
+use App\Models\Asset;
 use Faker\Generator as Faker;
-use Psy\Util\Str;
 
-$factory->define(Model::class, function (Faker $faker) {
+$factory->define(Asset::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
-        'status' => $faker->randomElements(['active','not_active']),
-        'description' => Str::random(50)
+        'status' => $faker->randomElement(['active','not_active']),
+        'description' => $faker->sentence
     ];
 });
