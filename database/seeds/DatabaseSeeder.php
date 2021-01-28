@@ -14,7 +14,9 @@ class DatabaseSeeder extends Seeder
         \DB::table('assets')->delete();
         \DB::table('users')->delete();
 
-        $this->call(AssetSeeder::class);
-        $this->call(UserSeeder::class);
+        $this->call([
+            AssetSeeder::class,
+            UserSeeder::class
+        ]);
     }
 }

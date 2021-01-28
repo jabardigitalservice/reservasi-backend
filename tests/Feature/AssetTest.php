@@ -13,18 +13,14 @@ class AssetTest extends TestCase
     use RefreshDatabase;
     use WithoutMiddleware;
 
-    private $user;
-    private $asset;
-
     public function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed');
 
-        // 1. Mock users
-        $this->user = User::find(1);
-        // 2. Mock asset
-        $this->asset = Asset::find(1);
+        // Provide mocking data for testing
+        $this->asset = factory(Asset::class)->create();
+        $this->admin = factory(User::class)->create(['role' => 'admin_reservasi,./']);
     }
 
     /**
@@ -33,8 +29,8 @@ class AssetTest extends TestCase
      */
     public function testIndexAsset()
     {
-        // 1. Mock user
-        $admin = $this->user;
+        // 1. Mock data
+        $admin = $this->admin;
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.index'));
         // 3. Verify and Assertion
@@ -47,8 +43,8 @@ class AssetTest extends TestCase
      */
     public function testIndexAssetPerPage()
     {
-        // 1. Mock user
-        $admin = $this->user;
+        // 1. Mock data
+        $admin = $this->admin;
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.index', ['perPage' => 50]));
         // 3. Verify and Assertion
@@ -61,8 +57,8 @@ class AssetTest extends TestCase
      */
     public function testIndexAssetSearchByName()
     {
-        // 1. Mock user
-        $admin = $this->user;
+        // 1. Mock data
+        $admin = $this->admin;
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.index', ['name' => 'zoom']));
         // 3. Verify and Assertion
@@ -75,8 +71,8 @@ class AssetTest extends TestCase
      */
     public function testIndexAssetSearchByStatus()
     {
-        // 1. Mock user
-        $admin = $this->user;
+        // 1. Mock data
+        $admin = $this->admin;
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.index', ['status' => 'active']));
         // 3. Verify and Assertion
@@ -91,9 +87,9 @@ class AssetTest extends TestCase
     public function testShowAsset()
     {
         // 1. Create mock
-        $admin = $this->user;
+        $admin = $this->admin;
         // 2. Hit Api Endpoint
-        $response = $this->actingAs($admin)->get(route('asset.show', 1));
+        $response = $this->actingAs($admin)->get(route('asset.show', $this->asset));
         // 3. Verify and Assertion
         $response->assertStatus(200);
     }
@@ -106,7 +102,7 @@ class AssetTest extends TestCase
     public function testStoreAsset()
     {
         // 1. Create mock
-        $admin = $this->user;
+        $admin = $this->admin;
 
         $data = [
             'name' => 'Jabar Command Center',
@@ -118,6 +114,9 @@ class AssetTest extends TestCase
         $response = $this->actingAs($admin)->post(route('asset.store'), $data);
         // 3. Verify and Assertion
         $response->assertStatus(201);
+        $response->assertJson(['data' => [
+            'status' => $data['status'],
+        ]]);
     }
 
     /**
@@ -128,11 +127,14 @@ class AssetTest extends TestCase
     public function testDestroyAsset()
     {
         // 1. Create mock
-        $admin = $this->user;
+        $admin = $this->admin;
         // 2. Hit Api Endpoint
-        $response = $this->actingAs($admin)->delete(route('asset.destroy', 1));
+        $response = $this->actingAs($admin)->delete(route('asset.destroy', $this->asset));
         // 3. Verify and Assertion
         $response->assertStatus(200);
+        $response->assertJson([
+            'message' => 'Asset record deleted.',
+        ]);
     }
 
     /**
@@ -143,7 +145,7 @@ class AssetTest extends TestCase
     public function testActiveListAsset()
     {
         // 1. Create mock
-        $admin = $this->user;
+        $admin = $this->admin;
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.list'));
         // 3. Verify and Assertion

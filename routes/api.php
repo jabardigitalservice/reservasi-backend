@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'HomeController');
 
 Route::group(['middleware' => ['auth:api']], function () {
-    Route::get('user', 'Settings\ProfileController@index');
+    Route::get('user', 'Settings\ProfileController@index')->name('user.get');
     Route::group(['namespace' => 'V1'], function () {
         Route::get('asset/list', 'ActiveListAssetController@index')->name('asset.list');
         Route::apiResource('asset', 'AssetController');
@@ -25,6 +25,6 @@ Route::group(['middleware' => ['auth:api']], function () {
             ->parameters([
                 'reserved' => 'reservation',
             ]);
-        Route::get('dashboard/reservation-statistic', 'DashboardController@reservationStatistic');
+        Route::get('dashboard/reservation-statistic', 'DashboardController@reservationStatistic')->name('reservation.dashboard');
     });
 });
