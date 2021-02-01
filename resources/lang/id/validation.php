@@ -70,4 +70,5 @@ return [
     'url' => 'Format isian :attribute tidak valid.',
     'asset_reserved' => 'Isian :attribute telah direservasi',
     'asset_modified' => 'data reservasi dapat di modif jika statusnya belum disetujui',
+    'asset_modified_time' => 'data reservasi dapat di modif jika waktu mulai kurang dari 30 menit',
 ];
