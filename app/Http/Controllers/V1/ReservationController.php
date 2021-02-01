@@ -88,7 +88,7 @@ class ReservationController extends Controller
     public function update(ReservationRequest $request, Reservation $reservation)
     {
         abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
-        abort_if($reservation->start_time->subMinutes(30) > Carbon::now(), 500, __('validation.asset_modified_time'));
+        abort_if($reservation->start_time->subMinutes(30) > Carbon::now('+07:00'), 500, __('validation.asset_modified_time'));
         $asset = Asset::find($request->asset_id);
         $reservation->fill($request->all() + [
             'asset_name' => $asset->name,
