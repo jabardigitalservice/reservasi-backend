@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 return [
   'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
