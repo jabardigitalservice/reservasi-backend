@@ -10,7 +10,7 @@ class Asset extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'status', 'description'];
+    protected $fillable = ['name', 'status', 'capacity', 'description'];
 
     protected $enums = [
         'status' => AssetStatusEnum::class,
