@@ -2,9 +2,9 @@ name: Laravel
 
 on:
   push:
-    branches: [ add-composer-phpcs-dan-phpcbf ]
+    branches: [ development ]
   pull_request:
-    branches: [ add-composer-phpcs-dan-phpcbf]
+    branches: [ development ]
 
 jobs:
   laravel-tests:
@@ -37,5 +37,3 @@ jobs:
         SESSION_DRIVER: array
         QUEUE_DRIVER: sync
       run: vendor/bin/phpunit
-    - name: Execute phpcs
-      run: vendor/bin/phpcs
