@@ -10,8 +10,9 @@ use App\Models\Reservation;
 
 class ReservationStoreMail extends Mailable
 {
-    use Queueable, SerializesModels;
-    
+    use Queueable;
+    use SerializesModels;
+
     public $reservation;
 
     /**
