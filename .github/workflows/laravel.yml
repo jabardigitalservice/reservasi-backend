@@ -2,9 +2,9 @@ name: Laravel
 
 on:
   push:
-    branches: [ development ]
+    branches: [ add-composer-phpcs-dan-phpcbf ]
   pull_request:
-    branches: [ development ]
+    branches: [ add-composer-phpcs-dan-phpcbf ]
 
 jobs:
   laravel-tests:
