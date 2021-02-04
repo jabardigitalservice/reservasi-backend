@@ -4,7 +4,7 @@ on:
   push:
     branches: [ add-composer-phpcs-dan-phpcbf ]
   pull_request:
-    branches: [ add-composer-phpcs-dan-phpcbf ]
+    branches: [ add-composer-phpcs-dan-phpcbf]
 
 jobs:
   laravel-tests:
