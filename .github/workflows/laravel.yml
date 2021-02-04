@@ -37,3 +37,5 @@ jobs:
         SESSION_DRIVER: array
         QUEUE_DRIVER: sync
       run: vendor/bin/phpunit
+    - name: Execute phpcs
+      run: vendor/bin/phpcs
