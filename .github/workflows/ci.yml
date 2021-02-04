@@ -4,7 +4,7 @@ on:
   push:
     branches: [ development ]
   pull_request:
-    branches: [ development]
+    branches: [ development ]
 
 jobs:
   phpunit:
@@ -39,3 +39,6 @@ jobs:
 
     - name: Run phpunit
       run: vendor/bin/phpunit tests/
+      
+    - name: Run phpcs
+      run: vendor/bin/phpcs
