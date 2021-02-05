@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Laravel Standards">
+<ruleset name="JDS Standards">
 
     <!--
        The name attribute of the ruleset tag is displayed
@@ -8,7 +8,7 @@
        except in this file, so it can contain information for
        developers who may change this file in the future.
     -->
-    <description>The Laravel Coding Standards</description>
+    <description>The JDS Coding Standards</description>
 
     <!--
     If no files or directories are specified on the command line
@@ -67,6 +67,6 @@
        PEAR standard exists inside the PHP_CodeSniffer install
        directory.
     -->
-    <rule ref="PSR2"/>
+    <rule ref="PSR12"/>
 
 </ruleset>
