@@ -51,7 +51,7 @@ class AssetReservationRule implements Rule
                 })
                 ;
             })
-            ->alreadyApproved() 
+            ->alreadyApproved()
             ->where(function ($query) {
                 if ($this->id) {
                     $query->where('id', '!=', $this->id);
