@@ -11,8 +11,9 @@ use App\Enums\ReservationStatusEnum;
 
 class ReservationApprovalMail extends Mailable
 {
-    use Queueable, SerializesModels;
-    
+    use Queueable;
+    use SerializesModels;
+
     public $reservation;
     public $status;
 

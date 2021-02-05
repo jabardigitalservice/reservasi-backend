@@ -2,6 +2,9 @@
 
 Backend API untuk Aplikasi Reservasi Aset di Jabar Digital Service.
 
+<a href="https://codeclimate.com/github/jabardigitalservice/reservasi-backend/maintainability"><img src="https://api.codeclimate.com/v1/badges/54b142849f826afb5c4f/maintainability" /></a>
+<a href="https://codeclimate.com/github/jabardigitalservice/reservasi-backend/test_coverage"><img src="https://api.codeclimate.com/v1/badges/54b142849f826afb5c4f/test_coverage" /></a>
+
 ## Petunjuk development
 1. Ikuti Development Guides https://github.com/jabardigitalservice/development-guides
 2. Clean Code, ikuti standard style FIG PSR-12 dengan menggunakan PHP Code Sniffer.

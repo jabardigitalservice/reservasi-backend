@@ -66,6 +66,12 @@
         ],
         "test": [
             "XDEBUG_MODE=coverage vendor/bin/phpunit"
+        ],
+        "phpcs": [
+          "vendor/bin/phpcs"
+        ],
+        "phpcbf": [
+          "vendor/bin/phpcbf"
         ]
     }
 }
