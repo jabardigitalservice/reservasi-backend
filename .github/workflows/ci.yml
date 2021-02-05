@@ -2,7 +2,7 @@ name: Laravel
 
 on:
   push:
-    branches: [ development ]
+    branches: [ seeder-update ]
   pull_request:
     branches: [ development ]
 
