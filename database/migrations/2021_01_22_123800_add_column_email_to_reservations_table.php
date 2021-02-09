@@ -14,7 +14,7 @@ class AddColumnEmailToReservationsTable extends Migration
     public function up()
     {
         Schema::table('reservations', function (Blueprint $table) {
-            $table->string('email')->after('username');
+            $table->string('email')->after('username')->nullable();
         });
     }
 

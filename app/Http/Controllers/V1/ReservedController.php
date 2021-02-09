@@ -6,11 +6,11 @@ use App\Enums\ReservationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AcceptReservationRequest;
 use App\Http\Resources\ReservationResource;
+use App\Mail\ReservationApprovalMail;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ReservationApprovalMail;
 
 class ReservedController extends Controller
 {
@@ -58,11 +58,11 @@ class ReservedController extends Controller
      */
     public function update(AcceptReservationRequest $request, Reservation $reservation)
     {
-        $request->request->add([
+        $request->request->add();
+        $reservation->fill($request->all() + [
             'approval_date' => Carbon::now(),
-            'user_id_updated' => $request->user()->uuid
-        ]);
-        $reservation->fill($request->all())->save();
+            'user_id_updated' => $request->user()->uuid,
+        ])->save();
         Mail::to($reservation->email)->send(new ReservationApprovalMail($reservation));
         return new ReservationResource($reservation);
     }

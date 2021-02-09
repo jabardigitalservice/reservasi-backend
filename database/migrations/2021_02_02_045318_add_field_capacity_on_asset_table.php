@@ -14,7 +14,7 @@ class AddFieldCapacityOnAssetTable extends Migration
     public function up()
     {
         Schema::table('assets', function (Blueprint $table) {
-            $table->integer('capacity')->after('status');
+            $table->integer('capacity')->after('status')->nullable();
         });
     }
 
