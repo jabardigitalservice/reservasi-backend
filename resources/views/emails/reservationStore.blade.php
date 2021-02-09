@@ -2,6 +2,7 @@
 # Reservasi Aset Baru
 
 Melalui surat elektronik ini, kami memberitahukan bahwa ada data reservasi yang kami terima yaitu:
+- Nama Pegawai: {{ $reservation->user_fullname }}
 - Judul Kegiatan: {{ $reservation->title }}
 - Catatan Kegiatan: {{ $reservation->description }}
 - Tanggal dan Waktu Kegiatan: {{ $reservation->start_time }} sd. {{ $reservation->end_time }}
