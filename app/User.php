@@ -41,14 +41,14 @@ class User extends Authenticatable
 
     public function hasRole($roleName): bool
     {
-        return $this->role === $roleName;
+        return $this->role == $roleName;
     }
 
     public function hasPermission($permissionName): bool
     {
         $permissions = $this->getAttribute('permissions');
 
-        if ($permissions === null) {
+        if ($permissions == null) {
             return false;
         }
 

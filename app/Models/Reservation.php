@@ -40,6 +40,11 @@ class Reservation extends Model
         'approval_status' => ReservationStatusEnum::class,
     ];
 
+    protected $casts = [
+        'start_time' => 'datetime:Y-m-d H:i',
+        'end_time' => 'datetime:Y-m-d H:i',
+    ];
+
     public function scopeByUser($query, $user)
     {
         return $query->where('user_id_reservation', $user->uuid);

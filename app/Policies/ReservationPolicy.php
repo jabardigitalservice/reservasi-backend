@@ -13,7 +13,7 @@ class ReservationPolicy
 
     public function before(User $user, $ability)
     {
-        $actions = ['update', 'view'];
+        $actions = ['update', 'view', 'viewAny'];
         if (
             $user->hasRole(UserRoleEnum::admin_reservasi()) &&
             in_array($ability, $actions)
@@ -31,6 +31,17 @@ class ReservationPolicy
     public function viewAny(User $user)
     {
         return $user->hasPermission('list-reservation');
+    }
+
+    /**
+     * Determine whether the user can view any models.
+     *
+     * @param  \App\Entities\User  $user
+     * @return mixed
+     */
+    public function create(User $user)
+    {
+        return $user->hasPermission('create-reservation');
     }
 
     /**

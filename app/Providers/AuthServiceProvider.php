@@ -30,13 +30,13 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         /* define a admin user role */
-        Gate::define('isAdmin', function (User $user) {
-            return $user->hasRole(UserRoleEnum::admin_reservasi());
+        Gate::define('isAdmin', function () {
+            return Auth::user()->hasRole(UserRoleEnum::admin_reservasi());
         });
 
         /* define a employee user role */
-        Gate::define('isEmployee', function (User $user) {
-            return $user->hasRole(UserRoleEnum::employee_reservasi());
+        Gate::define('isEmployee', function () {
+            return Auth::user()->hasRole(UserRoleEnum::employee_reservasi());
         });
     }
 }
