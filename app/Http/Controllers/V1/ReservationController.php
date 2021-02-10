@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationRequest;
@@ -73,6 +74,7 @@ class ReservationController extends Controller
             'email' => $request->user()->email,
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
+            'approval_status' => ReservationStatusEnum::already_approved(),
         ]);
 
         Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
