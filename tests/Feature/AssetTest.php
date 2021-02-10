@@ -108,6 +108,7 @@ class AssetTest extends TestCase
             'name' => 'Jabar Command Center',
             'status' => 'active',
             'description' => 'JDS Team',
+            'capacity' => 100
         ];
 
         // 2. Hit Api Endpoint

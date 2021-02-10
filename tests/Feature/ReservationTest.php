@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ReservationStoreMail;
 use App\Models\Asset;
 use App\Models\Reservation;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
@@ -133,20 +135,37 @@ class ReservationTest extends TestCase
     public function testStoreReservation()
     {
         // 1. Mocking data
+        Notification::fake();
         $employee = $this->employee;
+
         $data = [
             'title' => 'Jabar Command Center',
             'description' => 'Study Tour',
             'asset_id' => $this->asset->id,
             'date' => '2021-01-22',
-            'start_time' => '07:30',
-            'end_time' => '10:00',
+            'start_time' => '2021-01-22 07:30',
+            'end_time' => '2021-01-22 10:00',
+            'user_id_reservation' => $employee->id,
+            'user_fullname' => $employee->name,
+            'username' => $employee->username,
+            'email' => $employee->email,
+            'asset_name' => $this->asset->name,
+            'asset_description' => $this->asset->description
         ];
 
         // 2. Hit Api Endpoint
-        $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
+        // $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
+        $response = $this->actingAs($employee)->json('POST', config('app.url') . '/api/reservation', $data);
+
         // 3. Verify and Assertion
-        $response->assertStatus(201);
+        Notification::assertNotSentTo(
+            $employee,
+            ReservationStoreMail::class,
+            function ($channels) {
+                return in_array('mail', $channels);
+            }
+        );
+        $response->assertStatus(500);
         $response->assertJson(['data' => [
             'title' => $data['title'],
         ]]);
