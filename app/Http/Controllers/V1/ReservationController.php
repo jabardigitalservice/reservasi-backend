@@ -12,8 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationStoreMail;
-use App\Policies\ReservationPolicy;
-use App\User;
 
 class ReservationController extends Controller
 {
@@ -26,7 +24,7 @@ class ReservationController extends Controller
     public function __construct()
     {
         $this->middleware('can:isEmployee')->only(['store', 'update']);
-        $this->authorizeResource(ReservationPolicy::class, 'reservation');
+        $this->authorizeResource(Reservation::class);
     }
     /**
      * index
@@ -52,8 +50,7 @@ class ReservationController extends Controller
 
         //order
         $records = $this->sortBy($sortBy, $orderBy, $records);
-
-        if (User::hasRole(UserRoleEnum::employee_reservasi())) {
+        if ($request->user()->hasRole(UserRoleEnum::employee_reservasi())) {
             $records->byUser($request->user());
         }
 
