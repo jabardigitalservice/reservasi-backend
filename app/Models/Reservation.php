@@ -24,6 +24,7 @@ class Reservation extends Model
         'asset_name',
         'asset_description',
         'approval_status',
+        'note',
         'date',
         'start_time',
         'end_time',
