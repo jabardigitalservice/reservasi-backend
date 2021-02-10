@@ -27,7 +27,7 @@ class ReservationApprovalMail extends Mailable
         $this->reservation = $reservation;
 
         $this->status = 'Ditolak';
-        if ($reservation->status == ReservationStatusEnum::already_approved()) {
+        if ($reservation->approval_status == ReservationStatusEnum::already_approved()) {
             $this->status = 'Disetujui';
         }
     }
