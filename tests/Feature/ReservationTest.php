@@ -154,8 +154,7 @@ class ReservationTest extends TestCase
         ];
 
         // 2. Hit Api Endpoint
-        // $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
-        $response = $this->actingAs($employee)->json('POST', config('app.url') . '/api/reservation', $data);
+        $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
 
         // 3. Verify and Assertion
         Notification::assertNotSentTo(
@@ -165,7 +164,7 @@ class ReservationTest extends TestCase
                 return in_array('mail', $channels);
             }
         );
-        $response->assertStatus(500);
+        $response->assertStatus(201);
         $response->assertJson(['data' => [
             'title' => $data['title'],
         ]]);
