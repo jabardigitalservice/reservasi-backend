@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Reservation;
 use App\Rules\AssetReservationRule;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ReservationRequest extends FormRequest
@@ -25,6 +25,8 @@ class ReservationRequest extends FormRequest
      */
     public function rules()
     {
+        $date = Carbon::now('+07:00')->subDay()->format('Y-m-d');
+        $start_time = Carbon::now('+07:00')->subMinute()->format('Y-m-d H:i:s');
         return [
             'title' => 'required',
             'asset_id' => [
@@ -37,8 +39,8 @@ class ReservationRequest extends FormRequest
                     optional($this->reservation)->id
                 )
             ],
-            'date' => 'required|date|date_format:Y-m-d',
-            'start_time' => 'required|date|date_format:Y-m-d H:i',
+            'date' => "required|date|date_format:Y-m-d|after:{$date}",
+            'start_time' => "required|date|date_format:Y-m-d H:i|after:{$start_time}",
             'end_time' => 'required|date|date_format:Y-m-d H:i|after:start_time',
         ];
     }

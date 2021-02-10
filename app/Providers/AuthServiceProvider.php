@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Enums\UserRoleEnum;
+use App\Models\Reservation;
+use App\Policies\ReservationPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -15,7 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        // 'App\Model' => 'App\Policies\ModelPolicy',
+        Reservation::class => ReservationPolicy::class,
     ];
 
     /**
@@ -29,12 +31,12 @@ class AuthServiceProvider extends ServiceProvider
 
         /* define a admin user role */
         Gate::define('isAdmin', function () {
-            return Auth::user()->role == UserRoleEnum::admin_reservasi();
+            return Auth::user()->hasRole(UserRoleEnum::admin_reservasi());
         });
 
         /* define a employee user role */
         Gate::define('isEmployee', function () {
-            return Auth::user()->role == UserRoleEnum::employee_reservasi();
+            return Auth::user()->hasRole(UserRoleEnum::employee_reservasi());
         });
     }
 }

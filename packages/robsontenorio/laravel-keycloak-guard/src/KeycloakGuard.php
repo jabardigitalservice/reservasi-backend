@@ -139,6 +139,7 @@ class KeycloakGuard implements Guard
         $user->username = optional($this->decodedToken)->preferred_username;
         $user->email = optional($this->decodedToken)->email;
         $user->role = $this->getRealmRoles();
+        $user->permissions  = $this->getClientRoles();
         $this->setUser($user);
 
         return true;
@@ -198,6 +199,23 @@ class KeycloakGuard implements Guard
             }
         }
         return false;
+    }
+
+    public function getClientRoles()
+    {
+        if (! $this->decodedToken->resource_access) {
+            return false;
+        }
+
+        $roles = [];
+
+        $resourceAccess = (array) $this->decodedToken->resource_access;
+
+        foreach ($resourceAccess as $resource) {
+            $roles = array_merge($roles, $resource->roles);
+        }
+
+        return $roles;
     }
 
     public function getRealmRoles()
