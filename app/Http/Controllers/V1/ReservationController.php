@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationRequest;
@@ -24,6 +25,7 @@ class ReservationController extends Controller
     public function __construct()
     {
         $this->middleware('can:isEmployee')->only(['store', 'update']);
+        $this->authorizeResource(Reservation::class);
     }
     /**
      * index
@@ -49,8 +51,7 @@ class ReservationController extends Controller
 
         //order
         $records = $this->sortBy($sortBy, $orderBy, $records);
-
-        if ($request->user()->role == UserRoleEnum::employee_reservasi()) {
+        if ($request->user()->hasRole(UserRoleEnum::employee_reservasi())) {
             $records->byUser($request->user());
         }
 
@@ -73,6 +74,7 @@ class ReservationController extends Controller
             'email' => $request->user()->email,
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
+            'approval_status' => ReservationStatusEnum::already_approved(),
         ]);
 
         Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
@@ -88,7 +90,7 @@ class ReservationController extends Controller
     public function update(ReservationRequest $request, Reservation $reservation)
     {
         abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
-        abort_if(Carbon::now('+07:00') > $reservation->start_time->subMinutes(30), 500, __('validation.asset_modified_time'));
+        abort_if($reservation->check_time_edit_valid, 500, __('validation.asset_modified_time'));
         $asset = Asset::find($request->asset_id);
         $reservation->fill($request->all() + [
             'asset_name' => $asset->name,
@@ -176,6 +178,10 @@ class ReservationController extends Controller
             return $records->orderBy('date', $orderBy)
                 ->orderBy('start_time', $orderBy)
                 ->orderBy('end_time', $orderBy);
+        }
+        $sortByAllowed = ['user_fullname', 'username', 'title', 'approval_status', 'date'];
+        if (!in_array($sortBy, $sortByAllowed)) {
+            $sortBy = 'created_at';
         }
         return $records->orderBy($sortBy, $orderBy);
     }
