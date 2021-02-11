@@ -38,7 +38,7 @@ class Reservation extends Model
     ];
 
     protected $enums = [
-        'approval_status' => ReservationStatusEnum::class,
+        'approval_status' => ReservationStatusEnum::class . ':nullable'
     ];
 
     protected $casts = [
