@@ -160,7 +160,7 @@ class ReservationTest extends TestCase
 
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
-
+        dd($response->getContent());
         // 3. Verify and Assertion
         Notification::assertNotSentTo(
             $employee,
