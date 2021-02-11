@@ -139,7 +139,6 @@ class ReservationTest extends TestCase
     public function testStoreReservation()
     {
         // 1. Mocking data
-        Notification::fake();
         $employee = $this->employee;
 
         $data = [
@@ -160,15 +159,8 @@ class ReservationTest extends TestCase
 
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
-        dd($response->getContent());
+
         // 3. Verify and Assertion
-        Notification::assertNotSentTo(
-            $employee,
-            ReservationStoreMail::class,
-            function ($channels) {
-                return in_array('mail', $channels);
-            }
-        );
         $response->assertStatus(201);
         $response->assertJson(['data' => [
             'title' => $data['title'],

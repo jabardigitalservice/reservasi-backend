@@ -77,7 +77,7 @@ class ReservationController extends Controller
             'approval_status' => ReservationStatusEnum::already_approved(),
         ]);
 
-        Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
+        // Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
         return new ReservationResource($reservation);
     }
 
