@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ReservationStoreMail;
 use App\Models\Asset;
 use App\Models\Reservation;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
@@ -123,9 +126,12 @@ class ReservationTest extends TestCase
             'username' => $employee->username,
             'asset_id' => $this->asset->id,
             'asset_name' => $this->asset->name,
+            'approval_status' => 'already_approved',
         ]);
+
         // 2. Hit Api Endpoint
-        $response = $this->actingAs($employee)->get(route('reservation.show', $reservation));
+        $response = $this->actingAs($employee)->get(route('reservation.show', $reservation->id));
+
         // 3. Verify and Assertion
         $response->assertStatus(200);
     }
@@ -133,23 +139,52 @@ class ReservationTest extends TestCase
     public function testStoreReservation()
     {
         // 1. Mocking data
+        Mail::fake();
         $employee = $this->employee;
+
         $data = [
-            'title' => 'Jabar Command Center',
-            'description' => 'Study Tour',
+            'title' => 'test',
+            'description' => 'testing phpunit',
             'asset_id' => $this->asset->id,
-            'date' => '2021-01-22',
-            'start_time' => '07:30',
-            'end_time' => '10:00',
+            'date' => Carbon::now('+07:00')->format('Y-m-d'),
+            'start_time' => Carbon::now('+07:00')->format('Y-m-d H:i'),
+            'end_time' => Carbon::now('+07:00')->addMinutes(30)->format('Y-m-d H:i'),
+            'approval_status' => 'already_approved',
+            'user_id_reservation' => $employee->id,
+            'user_fullname' => $employee->name,
+            'username' => $employee->username,
+            'asset_id' => $this->asset->id,
+            'asset_name' => $this->asset->name,
+            'approval_status' => 'already_approved',
         ];
 
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
+
         // 3. Verify and Assertion
         $response->assertStatus(201);
         $response->assertJson(['data' => [
             'title' => $data['title'],
         ]]);
+    }
+
+    public function testSendEmailReservation()
+    {
+        Mail::fake();
+        $employee = $this->employee;
+
+        $reservation = factory(Reservation::class)->create([
+            'user_id_reservation' => $employee->id,
+            'user_fullname' => $employee->name,
+            'username' => $employee->username,
+            'asset_id' => $this->asset->id,
+            'asset_name' => $this->asset->name,
+            'approval_status' => 'already_approved',
+        ]);
+
+        Mail::to($employee)->send(new ReservationStoreMail($reservation, 'message'));
+
+        Mail::assertSent(ReservationStoreMail::class);
     }
 
     public function testDestroyReservation()

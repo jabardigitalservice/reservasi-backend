@@ -27,9 +27,33 @@ class ReservedTest extends TestCase
     public function testIndexReserved()
     {
         // 1. Create mock
-        $admin = factory(User::class)->create(['role' => 'admin_reservasi,./']);
+        $admin = factory(User::class)->create(['role' => 'admin_reservasi']);
+        $employee = factory(User::class)->create(['role' => 'employee']);
+        $asset = factory(Asset::class)->create();
+
+        $reservation = factory(Reservation::class)->create([
+            'title' => 'Jabar Command Center',
+            'description' => 'Study Tour',
+            'asset_id' => $asset->id,
+            'date' => '2021-01-22',
+            'start_time' => '2021-01-22 07:30',
+            'end_time' => '2021-01-22 10:00',
+            'user_id_reservation' => $employee->id,
+            'user_fullname' => $employee->name,
+            'username' => $employee->username,
+            'email' => $employee->email,
+            'asset_name' => $asset->name,
+            'asset_description' => $asset->description
+        ]);
+
+        $data = [
+            'asset_id' => $asset->id,
+            'date' => '2021-02-26'
+        ];
+
         // 2. Hit Api Endpoint
-        $response = $this->actingAs($admin)->get(route('reserved.index'));
+        $response = $this->actingAs($admin)->json('GET', config('app.url') . '/api/reserved', $data);
+
         // 3. Verify and Assertion
         $response->assertStatus(200);
     }
