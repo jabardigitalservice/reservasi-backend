@@ -54,8 +54,8 @@ class ReservationController extends Controller
         if ($request->user()->hasRole(UserRoleEnum::employee_reservasi())) {
             $records->byUser($request->user());
         }
-
-        return ReservationResource::collection($records->paginate($perPage));
+        $records = $perPage == 'all' ? $records->get() : $records->paginate($perPage);
+        return ReservationResource::collection($records);
     }
 
     /**
@@ -132,7 +132,7 @@ class ReservationController extends Controller
      */
     protected function getPaginationSize($perPage)
     {
-        $perPageAllowed = [50, 100, 500];
+        $perPageAllowed = [50, 100, 500, 'all'];
 
         if (in_array($perPage, $perPageAllowed)) {
             return $perPage;
