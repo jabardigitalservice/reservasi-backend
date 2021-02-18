@@ -6,6 +6,7 @@ use App\Enums\ReservationStatusEnum;
 use App\Mail\ReservationApprovalMail;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationStoreMail;
+use Illuminate\Support\Arr;
 use App\Models\Reservation;
 
 class ReservationObserver
@@ -24,7 +25,7 @@ class ReservationObserver
     /**
      * Handle the reservation "updated" event.
      *
-     * @param  \App\Reservation  $reservation
+     * @param  \App\Models\Reservation  $reservation
      * @return void
      */
     public function updated(Reservation $reservation)
@@ -35,10 +36,12 @@ class ReservationObserver
             $reservations = Reservation::where('asset_id', $reservation->asset_id)
                         ->where('id', '!=', $reservation->id)
                         ->validateTime($reservation)
-                        ->update(['approval_status' => ReservationStatusEnum::rejected()]);
+                        ->get();
+            $cc = $reservations->unique('email')->pluck('email');
+            $id = $reservations->pluck('id');
+            Reservation::whereIn('id', $id)->update(['approval_status' => ReservationStatusEnum::rejected()]);
             //send rejection emails to users other than those already approved
-            $cc = $reservations->pluck('email');
-            Mail::to($reservation->email)->cc($cc)->send(new ReservationApprovalMail($reservation));
+            Mail::to(Arr::first($cc))->cc($cc)->send(new ReservationApprovalMail($reservation));
         }
 
     }

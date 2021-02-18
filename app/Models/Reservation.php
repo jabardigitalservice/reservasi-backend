@@ -28,7 +28,8 @@ class Reservation extends Model
         'date',
         'start_time',
         'end_time',
-        'user_id_updated'
+        'user_id_updated',
+        'approval_date'
     ];
 
     protected $dates = [
@@ -91,12 +92,12 @@ class Reservation extends Model
         return $this->approval_status != ReservationStatusEnum::not_yet_approved();
     }
 
-    public function getHasAlreadyApproved()
+    public function getHasAlreadyApprovedAttribute()
     {
         return $this->approval_status == ReservationStatusEnum::already_approved();
     }
 
-    public function getHasRejected()
+    public function getHasRejectedAttribute()
     {
         return $this->approval_status == ReservationStatusEnum::rejected();
     }
