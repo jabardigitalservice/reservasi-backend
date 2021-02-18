@@ -139,7 +139,6 @@ class ReservationTest extends TestCase
     public function testStoreReservation()
     {
         // 1. Mocking data
-        Mail::fake();
         $employee = $this->employee;
 
         $data = [
