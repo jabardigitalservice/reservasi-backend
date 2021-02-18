@@ -31,19 +31,17 @@ class ReservationObserver
     public function updated(Reservation $reservation)
     {
         Mail::to($reservation->email)->send(new ReservationApprovalMail($reservation));
-        if ($reservation->has_already_approved) {
-            //get reservation data that intersects with the agreed time
-            $reservations = Reservation::where('asset_id', $reservation->asset_id)
-                        ->where('id', '!=', $reservation->id)
-                        ->validateTime($reservation)
-                        ->get();
+        $reservations = Reservation::where('asset_id', $reservation->asset_id)
+                            ->where('id', '!=', $reservation->id)
+                            ->validateTime($reservation)
+                            ->get();
+        if ($reservation->has_already_approved && $reservations) {
             $cc = $reservations->unique('email')->pluck('email');
             $id = $reservations->pluck('id');
             Reservation::whereIn('id', $id)->update(['approval_status' => ReservationStatusEnum::rejected()]);
             //send rejection emails to users other than those already approved
             Mail::to(Arr::first($cc))->cc($cc)->send(new ReservationApprovalMail($reservation));
         }
-
     }
 
     /**
