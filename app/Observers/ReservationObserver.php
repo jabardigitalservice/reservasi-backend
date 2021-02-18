@@ -35,12 +35,10 @@ class ReservationObserver
             $reservations = Reservation::where('asset_id', $reservation->asset_id)
                         ->where('id', '!=', $reservation->id)
                         ->validateTime($reservation)
-                        ->get();
+                        ->update(['approval_status' => ReservationStatusEnum::rejected()]);
             //send rejection emails to users other than those already approved
-            foreach ($reservations as $reservation) {
-                $reservation->update(['approval_status' => ReservationStatusEnum::rejected()]);
-                Mail::to($reservation->email)->send(new ReservationApprovalMail($reservation));
-            }
+            $cc = $reservations->pluck('email');
+            Mail::to($reservation->email)->cc($cc)->send(new ReservationApprovalMail($reservation));
         }
 
     }
