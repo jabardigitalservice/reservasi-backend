@@ -123,6 +123,7 @@ class ReservationTest extends TestCase
 
     public function testShowReservation()
     {
+        Mail::fake();
         // 1. Mocking data
         $employee = $this->employee;
         $reservation = factory(Reservation::class)->create([
@@ -190,6 +191,7 @@ class ReservationTest extends TestCase
 
     public function testDestroyReservation()
     {
+        Mail::fake();
         // 1. Mocking data
         $employee = $this->employee;
         $asset = factory(Asset::class)->create();

@@ -28,6 +28,7 @@ class ReservedTest extends TestCase
      */
     public function testIndexReserved()
     {
+        Mail::fake();
         // 1. Create mock
         $admin = factory(User::class)->create(['role' => 'admin_reservasi']);
         $employee = factory(User::class)->create(['role' => 'employee']);
