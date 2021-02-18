@@ -60,7 +60,7 @@ class ReservedController extends Controller
     {
         $reservation->update($request->validated() + [
             'approval_date' => Carbon::now(),
-        ])->save();
+        ]);
         return new ReservationResource($reservation);
     }
 }

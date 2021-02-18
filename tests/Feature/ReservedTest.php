@@ -7,6 +7,8 @@ use App\Models\Reservation;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ReservedTest extends TestCase
@@ -31,14 +33,14 @@ class ReservedTest extends TestCase
         $employee = factory(User::class)->create(['role' => 'employee']);
         $asset = factory(Asset::class)->create();
 
-        $reservation = factory(Reservation::class)->create([
+        factory(Reservation::class)->create([
             'title' => 'Jabar Command Center',
             'description' => 'Study Tour',
             'asset_id' => $asset->id,
             'date' => '2021-01-22',
             'start_time' => '2021-01-22 07:30',
             'end_time' => '2021-01-22 10:00',
-            'user_id_reservation' => $employee->id,
+            'user_id_reservation' => Str::uuid(),
             'user_fullname' => $employee->name,
             'username' => $employee->username,
             'email' => $employee->email,
@@ -60,12 +62,16 @@ class ReservedTest extends TestCase
 
     public function testUpdateReserved()
     {
+        Mail::fake();
         // 1. Create mock
-        $admin = factory(User::class)->create(['role' => 'admin_reservasi,./']);
+        $admin = factory(User::class)->create(['role' => 'admin_reservasi']);
         $employee = factory(User::class)->create(['role' => 'employee_reservasi']);
+
         $asset = factory(Asset::class)->create();
+        $admin->uuid = Str::uuid();
+        $employee->uuid = Str::uuid();
         $reservation = factory(Reservation::class)->create([
-            'user_id_reservation' => $employee->id,
+            'user_id_reservation' => Str::uuid(),
             'user_fullname' => $employee->name,
             'username' => $employee->username,
             'asset_id' => $asset->id,
@@ -76,12 +82,11 @@ class ReservedTest extends TestCase
             'note' => 'Oke',
             'approval_status' => 'already_approved',
             'approval_date' => '2021-01-28',
-            'user_id_updated' => $admin->id,
         ];
 
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->put(route('reserved.update', $reservation), $data);
         // 3. Verify and Assertion
-        $response->assertStatus(403);
+        $response->assertStatus(200);
     }
 }
