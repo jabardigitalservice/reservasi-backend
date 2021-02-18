@@ -58,12 +58,9 @@ class ReservedController extends Controller
      */
     public function update(AcceptReservationRequest $request, Reservation $reservation)
     {
-        $request->request->add();
-        $reservation->fill($request->all() + [
+        $reservation->update($request->validated() + [
             'approval_date' => Carbon::now(),
-            'user_id_updated' => $request->user()->uuid,
         ])->save();
-        Mail::to($reservation->email)->send(new ReservationApprovalMail($reservation));
         return new ReservationResource($reservation);
     }
 }
