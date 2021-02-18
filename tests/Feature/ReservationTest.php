@@ -25,8 +25,11 @@ class ReservationTest extends TestCase
 
         // Provide mocking data for testing
         $this->asset = factory(Asset::class)->create();
-        $this->employee = factory(User::class)->create(['role' => 'employee_reservasi']);
-        $this->uuid = Str::uuid();
+        $this->employee = factory(User::class)->create([
+            'role' => 'employee_reservasi',
+            'uuid' => Str::uuid()
+        ]);
+        $this->uuid = (string) Str::uuid();
     }
 
     /**
@@ -142,7 +145,6 @@ class ReservationTest extends TestCase
         Mail::fake();
         // 1. Mocking data
         $employee = $this->employee;
-
         $data = [
             'title' => 'test',
             'description' => 'testing phpunit',
@@ -158,7 +160,6 @@ class ReservationTest extends TestCase
             'asset_name' => $this->asset->name,
             'approval_status' => 'already_approved',
         ];
-
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
         // 3. Verify and Assertion
