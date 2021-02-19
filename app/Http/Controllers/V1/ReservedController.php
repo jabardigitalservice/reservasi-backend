@@ -6,11 +6,9 @@ use App\Enums\ReservationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AcceptReservationRequest;
 use App\Http\Resources\ReservationResource;
-use App\Mail\ReservationApprovalMail;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class ReservedController extends Controller
 {

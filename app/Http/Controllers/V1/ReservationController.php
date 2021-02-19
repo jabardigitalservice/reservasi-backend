@@ -90,7 +90,7 @@ class ReservationController extends Controller
         abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
         abort_if($reservation->check_time_edit_valid, 500, __('validation.asset_modified_time'));
         $asset = Asset::find($request->asset_id);
-        $reservation->update($request->all() + [
+        $reservation->update($request->validated() + [
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
             'user_id_updated' => $request->user()->uuid

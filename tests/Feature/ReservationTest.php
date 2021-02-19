@@ -27,9 +27,7 @@ class ReservationTest extends TestCase
         $this->asset = factory(Asset::class)->create();
         $this->employee = factory(User::class)->create([
             'role' => 'employee_reservasi',
-            'uuid' => Str::uuid()
         ]);
-        $this->uuid = (string) Str::uuid();
     }
 
     /**
@@ -127,7 +125,7 @@ class ReservationTest extends TestCase
         // 1. Mocking data
         $employee = $this->employee;
         $reservation = factory(Reservation::class)->create([
-            'user_id_reservation' => $this->uuid,
+            'user_id_reservation' => $employee->uuid,
             'user_fullname' => $employee->name,
             'username' => $employee->username,
             'asset_id' => $this->asset->id,
@@ -154,7 +152,7 @@ class ReservationTest extends TestCase
             'start_time' => Carbon::now('+07:00')->format('Y-m-d H:i'),
             'end_time' => Carbon::now('+07:00')->addMinutes(30)->format('Y-m-d H:i'),
             'approval_status' => 'already_approved',
-            'user_id_reservation' => $this->uuid,
+            'user_id_reservation' => $employee->uuid,
             'user_fullname' => $employee->name,
             'username' => $employee->username,
             'asset_id' => $this->asset->id,
@@ -176,7 +174,7 @@ class ReservationTest extends TestCase
         $employee = $this->employee;
 
         $reservation = factory(Reservation::class)->create([
-            'user_id_reservation' => $this->uuid,
+            'user_id_reservation' => $employee->uuid,
             'user_fullname' => $employee->name,
             'username' => $employee->username,
             'asset_id' => $this->asset->id,
@@ -196,7 +194,7 @@ class ReservationTest extends TestCase
         $employee = $this->employee;
         $asset = factory(Asset::class)->create();
         $reservation = factory(Reservation::class)->create([
-            'user_id_reservation' => $this->uuid,
+            'user_id_reservation' => $employee->uuid,
             'user_fullname' => $employee->name,
             'username' => $employee->username,
             'asset_id' => $asset->id,

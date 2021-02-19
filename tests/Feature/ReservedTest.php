@@ -8,7 +8,6 @@ use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ReservedTest extends TestCase
@@ -41,7 +40,7 @@ class ReservedTest extends TestCase
             'date' => '2021-01-22',
             'start_time' => '2021-01-22 07:30',
             'end_time' => '2021-01-22 10:00',
-            'user_id_reservation' => Str::uuid(),
+            'user_id_reservation' => $employee->uuid,
             'user_fullname' => $employee->name,
             'username' => $employee->username,
             'email' => $employee->email,
@@ -69,10 +68,8 @@ class ReservedTest extends TestCase
         $employee = factory(User::class)->create(['role' => 'employee_reservasi']);
 
         $asset = factory(Asset::class)->create();
-        $admin->uuid = Str::uuid();
-        $employee->uuid = Str::uuid();
         $reservation = factory(Reservation::class)->create([
-            'user_id_reservation' => Str::uuid(),
+            'user_id_reservation' => $employee->uuid,
             'user_fullname' => $employee->name,
             'username' => $employee->username,
             'asset_id' => $asset->id,
