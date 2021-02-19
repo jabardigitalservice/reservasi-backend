@@ -67,17 +67,15 @@ class ReservationController extends Controller
     public function store(ReservationRequest $request)
     {
         $asset = Asset::find($request->asset_id);
-        $reservation = Reservation::create($request->all() + [
+        $reservation = Reservation::create($request->validated() + [
             'user_id_reservation' => $request->user()->uuid,
             'user_fullname' => $request->user()->name,
             'username' => $request->user()->username,
             'email' => $request->user()->email,
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
-            'approval_status' => ReservationStatusEnum::already_approved(),
+            'approval_status' => ReservationStatusEnum::not_yet_approved(),
         ]);
-
-        Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
         return new ReservationResource($reservation);
     }
 
@@ -92,11 +90,11 @@ class ReservationController extends Controller
         abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
         abort_if($reservation->check_time_edit_valid, 500, __('validation.asset_modified_time'));
         $asset = Asset::find($request->asset_id);
-        $reservation->fill($request->all() + [
+        $reservation->update($request->validated() + [
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
             'user_id_updated' => $request->user()->uuid
-        ])->save();
+        ]);
         return new ReservationResource($reservation);
     }
 
