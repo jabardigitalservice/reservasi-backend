@@ -202,7 +202,7 @@ class ReservationController extends Controller
             'timezone' => 'Asia/Jakarta',
         ]);
         // Update join_url from this reservation
-        $reservation->join_url($meetings->join_url);
+        $reservation->join_url = $meetings->join_url;
         $reservation->save();
         return $reservation;
     }
