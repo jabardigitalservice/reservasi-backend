@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationStoreMail;
+use \MacsiDigital\Zoom\Facades\Zoom;
 
 class ReservationController extends Controller
 {
@@ -76,6 +77,12 @@ class ReservationController extends Controller
             'asset_description' => $asset->description,
             'approval_status' => ReservationStatusEnum::not_yet_approved(),
         ]);
+
+        // if this asset_id is zoom meeting, then
+        // if ($reservation->asset_id == 1) {
+        $reservation = $this->createMeeting($reservation);
+        // }
+        Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
         return new ReservationResource($reservation);
     }
 
@@ -182,5 +189,80 @@ class ReservationController extends Controller
             $sortBy = 'created_at';
         }
         return $records->orderBy($sortBy, $orderBy);
+    }
+
+    public function createMeeting(Reservation $reservation)
+    {
+        // Membuat Meeting Baru
+        $meetings = Zoom::user()->find(config('zoom.email'))->meetings()->create([
+            'topic' => $reservation->title,
+            // 'duration' => 35, //in minutes
+            // 'type' => '2',
+            'start_time' => $reservation->start_time,
+            'timezone' => 'Asia/Jakarta',
+        ]);
+        // Update join_url from this reservation
+        $reservation->join_url($meetings->join_url);
+        $reservation->save();
+        return $reservation;
+    }
+
+    public function createZoom(Request $request)
+    {
+        /**
+         *
+         * Menampilkan Seluruh User di Akun Zoom
+         */
+        // $user = Zoom::user()->all();
+        // return [$user];
+
+        /**
+         *
+         * Menampilkan Seluruh User di Akun Zoom yang Aktif, pending, atau tidak aktif
+         */
+        // $user = Zoom::user()->where('status', 'active')->get(); // Allowed values active, inactive and pending
+        // return [$user];
+
+        /**
+         *
+         * Membuat User Baru
+         */
+        // $user = Zoom::user()->create([
+        //     'first_name' => 'Digiteam',
+        //     'last_name' => 'Reservasi Aset',
+        //     'email' => 'digiteamreservasi@gmail.com',
+        //     'password' => 'DigiteamReservasi123,./'
+        // ]);
+        // return [$user];
+
+        /**
+         *
+         * Menampilkan seluruh Daftar Meeting yang dimiliki User
+         */
+        $meetings = Zoom::user()->find(config('zoom.email'))->meetings;
+        return [$meetings];
+
+        /**
+         *
+         * Membuat Meeting Baru
+         */
+        // $meetings = Zoom::user()->find(config('zoom.email'))->meetings()->create([
+        //     'topic' => 'Rapat Mini Project',
+        //     'duration' => 35,
+        //     'type' => '2',
+        //     'start_time' => new Carbon('2021-03-01 10:00:00'),
+        //     'timezone' => 'Asia/Jakarta',
+        // ]);
+        // return [$meetings];
+
+        /**
+         *
+         * Cek Config Zoom
+         */
+        // return [
+        //     'email' => config('zoom.email'),
+        //     'api_key' => config('zoom.api_key'),
+        //     'api_secret' => config('zoom.api_secret'),
+        // ];
     }
 }
