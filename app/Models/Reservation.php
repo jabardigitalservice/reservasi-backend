@@ -28,6 +28,7 @@ class Reservation extends Model
         'date',
         'start_time',
         'end_time',
+        'join_url',
         'user_id_updated',
         'approval_date'
     ];
