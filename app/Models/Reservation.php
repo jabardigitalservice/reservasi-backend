@@ -28,7 +28,8 @@ class Reservation extends Model
         'date',
         'start_time',
         'end_time',
-        'user_id_updated'
+        'user_id_updated',
+        'approval_date'
     ];
 
     protected $dates = [
@@ -66,9 +67,39 @@ class Reservation extends Model
         return $query->where('approval_status', ReservationStatusEnum::rejected());
     }
 
+    public function scopeValidateTime($query, $reservation)
+    {
+        $query->where('date', $reservation->date)
+                ->where(function ($query) use ($reservation) {
+                    $query->where(function ($query) use ($reservation) {
+                        $query->whereTime('start_time', '<=', $reservation->start_time)
+                            ->whereTime('end_time', '>', $reservation->start_time);
+                    })
+                    ->orWhere(function ($query) use ($reservation) {
+                        $query->whereTime('start_time', '<', $reservation->end_time)
+                            ->whereTime('end_time', '>', $reservation->end_time);
+                    })
+                    ->orWhere(function ($query) use ($reservation) {
+                        $query->whereTime('start_time', '>=', $reservation->start_time)
+                            ->whereTime('end_time', '<=', $reservation->end_time);
+                    });
+                });
+        return $query;
+    }
+
     public function getIsNotYetApprovedAttribute()
     {
         return $this->approval_status != ReservationStatusEnum::not_yet_approved();
+    }
+
+    public function getHasAlreadyApprovedAttribute()
+    {
+        return $this->approval_status == ReservationStatusEnum::already_approved();
+    }
+
+    public function getHasRejectedAttribute()
+    {
+        return $this->approval_status == ReservationStatusEnum::rejected();
     }
 
     public function getCheckTimeEditValidAttribute()

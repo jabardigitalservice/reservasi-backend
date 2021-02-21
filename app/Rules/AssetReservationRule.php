@@ -5,13 +5,12 @@ namespace App\Rules;
 use App\Models\Reservation;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Carbon;
+use stdClass;
 
 class AssetReservationRule implements Rule
 {
 
-    public $start_time;
-    public $end_time;
-    public $date;
+    public $reservation;
     public $id;
     /**
      * Create a new rule instance.
@@ -20,9 +19,10 @@ class AssetReservationRule implements Rule
      */
     public function __construct($date, $start_time, $end_time, $id = null)
     {
-        $this->date = $date;
-        $this->start_time = Carbon::parse($start_time);
-        $this->end_time = Carbon::parse($end_time);
+        $this->reservation = new stdClass();
+        $this->reservation->date = $date;
+        $this->reservation->start_time = Carbon::parse($start_time);
+        $this->reservation->end_time = Carbon::parse($end_time);
         $this->id = $id;
     }
 
@@ -35,29 +35,14 @@ class AssetReservationRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        $reservations = Reservation::where($attribute, $value)
-            ->where(function ($query) {
-                $query->where(function ($query) {
-                    $query->whereTime('start_time', '<=', $this->start_time)
-                        ->whereTime('end_time', '>', $this->start_time);
-                })
-                ->orWhere(function ($query) {
-                    $query->whereTime('start_time', '<', $this->end_time)
-                        ->whereTime('end_time', '>', $this->end_time);
-                })
-                ->orWhere(function ($query) {
-                    $query->whereTime('start_time', '>=', $this->start_time)
-                        ->whereTime('end_time', '<=', $this->end_time);
-                })
-                ;
-            })
+        return Reservation::where($attribute, $value)
+            ->validateTime($this->reservation)
             ->alreadyApproved()
             ->where(function ($query) {
                 if ($this->id) {
                     $query->where('id', '!=', $this->id);
                 }
-            });
-        return $reservations->doesntExist();
+            })->doesntExist();
     }
 
     /**
