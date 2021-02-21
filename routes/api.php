@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'HomeController');
 Route::group(['namespace' => 'V1'], function () {
-    Route::post('/zoom-create-room-test', 'ReservationController@createZoom');
+    Route::post('/zoom-create-room-test', 'ZoomController@createZoom');
 });
 
 Route::group(['middleware' => ['auth:api']], function () {
