@@ -56,9 +56,10 @@ class ZoomController extends Controller
         //     'timezone' => 'Asia/Jakarta',
         // ]);
         // return [$meetings];
+        $timeInSecond = $request->end_time->diffInSeconds($request->start_time);
         $meetings = Zoom::user()->find($request->email)->meetings()->create([
             'topic' => $request->topic,
-            'duration' => (strtotime($request->end_time) - strtotime($request->start_time))/60, // duration in minutes
+            'duration' => gmdate('H:i:s', $timeInSecond),
             'type' => '2',
             'start_time' => $request->start_time,
             'timezone' => 'Asia/Jakarta',
