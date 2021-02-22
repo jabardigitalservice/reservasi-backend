@@ -202,8 +202,8 @@ class ReservationTest extends TestCase
         ]);
 
         // 2. Hit Api Endpoint
-        $this->expectException('Symfony\Component\HttpKernel\Exception\HttpException');
-        $this->withoutExceptionHandling();
+        // $this->expectException('Symfony\Component\HttpKernel\Exception\HttpException');
+        // $this->withoutExceptionHandling();
         $response = $this->actingAs($employee)->delete(route('reservation.destroy', $reservation->id));
         // 3. Verify and Assertion
         $response->assertStatus(200);
