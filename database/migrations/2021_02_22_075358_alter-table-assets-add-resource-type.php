@@ -14,7 +14,7 @@ class AlterTableAssetsAddResourceType extends Migration
     public function up()
     {
         Schema::table('assets', function (Blueprint $table) {
-            $table->integer('resource_type')->after('capacity')->nullable();
+            $table->string('resource_type')->after('capacity')->nullable();
         });
     }
 
