@@ -64,7 +64,7 @@ class AssetController extends Controller
      */
     public function store(StoreAssetRequest $request)
     {
-        $result = Asset::create($request->all());
+        $result = Asset::create($request->validated());
 
         return new AssetResource($result);
     }
@@ -78,7 +78,7 @@ class AssetController extends Controller
      */
     public function update(EditAssetRequest $request, Asset $asset)
     {
-        $asset->fill($request->all())->save();
+        $asset->update($request->validated());
 
         return new AssetResource($asset);
     }
