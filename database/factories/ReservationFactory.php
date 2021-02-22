@@ -13,7 +13,6 @@ $factory->define(Reservation::class, function (Faker $faker) {
         'date' => $faker->date(),
         'start_time' => $faker->time(),
         'end_time' => $faker->time(),
-        // 'approval_status' => $faker->randomElement(['already_approved','not_yet_approved','rejected'])
         'approval_status' => $faker->randomElement(['already_approved'])
     ];
 });
