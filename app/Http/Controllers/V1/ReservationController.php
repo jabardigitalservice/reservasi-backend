@@ -76,7 +76,7 @@ class ReservationController extends Controller
             'email' => $request->user()->email,
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
-            'approval_status' => ReservationStatusEnum::not_yet_approved(),
+            'approval_status' => ReservationStatusEnum::already_approved(),
         ]);
 
         // if this asset_id is zoom meeting, then
@@ -113,7 +113,6 @@ class ReservationController extends Controller
      */
     public function destroy(Reservation $reservation)
     {
-        abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
         $reservation->delete();
         return response()->json(['message' => 'Reservation record deleted.']);
     }
