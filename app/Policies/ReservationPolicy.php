@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\UserRoleEnum;
-use App\Reservation;
+use App\Models\Reservation;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
