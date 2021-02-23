@@ -80,7 +80,7 @@ class ReservationController extends Controller
         ]);
 
         // if this asset_id is zoom meeting, then
-        if ($reservation->resource_type == ResourceTypeEnum::online()) {
+        if ($asset->resource_type == ResourceTypeEnum::online()) {
             $reservation = $this->createMeeting($reservation);
         }
         Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
@@ -206,4 +206,5 @@ class ReservationController extends Controller
         $reservation->save();
         return $reservation;
     }
+
 }
