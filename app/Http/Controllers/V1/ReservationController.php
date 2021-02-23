@@ -196,11 +196,12 @@ class ReservationController extends Controller
         // Membuat Meeting Baru
         $meetings = Zoom::user()->find(config('zoom.email'))->meetings()->create([
             'topic' => $reservation->title,
-            // 'duration' => 35, //in minutes
+            'duration' => 35, //in minutes
             // 'type' => '2',
             'start_time' => $reservation->start_time,
             'timezone' => 'Asia/Jakarta',
         ]);
+
         // Update join_url from this reservation
         $reservation->join_url = $meetings->join_url;
         $reservation->save();
