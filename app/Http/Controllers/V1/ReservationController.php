@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Enums\ReservationStatusEnum;
+use App\Enums\ResourceTypeEnum;
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationRequest;
@@ -79,9 +80,9 @@ class ReservationController extends Controller
         ]);
 
         // if this asset_id is zoom meeting, then
-        // if ($reservation->asset_id == 1) {
-        $reservation = $this->createMeeting($reservation);
-        // }
+        if ($reservation->resource_type == ResourceTypeEnum::online()) {
+            $reservation = $this->createMeeting($reservation);
+        }
         Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
         return new ReservationResource($reservation);
     }
@@ -94,7 +95,6 @@ class ReservationController extends Controller
      */
     public function update(ReservationRequest $request, Reservation $reservation)
     {
-        abort_if($reservation->is_not_yet_approved, 500, __('validation.asset_modified'));
         abort_if($reservation->check_time_edit_valid, 500, __('validation.asset_modified_time'));
         $asset = Asset::find($request->asset_id);
         $reservation->update($request->validated() + [

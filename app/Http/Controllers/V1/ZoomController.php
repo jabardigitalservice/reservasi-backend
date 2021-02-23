@@ -41,8 +41,8 @@ class ZoomController extends Controller
          *
          * Menampilkan seluruh Daftar Meeting yang dimiliki User
          */
-        $meetings = Zoom::user()->find(config('zoom.email'))->meetings;
-        return [$meetings];
+        // $meetings = Zoom::user()->find(config('zoom.email'))->meetings;
+        // return [$meetings];
 
         /**
          *
@@ -56,6 +56,15 @@ class ZoomController extends Controller
         //     'timezone' => 'Asia/Jakarta',
         // ]);
         // return [$meetings];
+        $timeInSecond = $request->end_time->diffInSeconds($request->start_time);
+        $meetings = Zoom::user()->find($request->email)->meetings()->create([
+            'topic' => $request->topic,
+            'duration' => gmdate('H:i:s', $timeInSecond),
+            'type' => '2',
+            'start_time' => $request->start_time,
+            'timezone' => 'Asia/Jakarta',
+        ]);
+        return [$meetings];
 
         /**
          *
