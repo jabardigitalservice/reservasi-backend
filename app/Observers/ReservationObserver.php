@@ -33,7 +33,7 @@ class ReservationObserver
         Mail::to($reservation->email)->send(new ReservationApprovalMail($reservation));
         $reservations = Reservation::where('asset_id', $reservation->asset_id)
                             ->where('id', '!=', $reservation->id)
-                            ->validateTime($reservation)
+                            // ->validateTime($reservation)
                             ->get();
         if ($reservation->has_already_approved && $reservations) {
             $cc = $reservations->unique('email')->pluck('email');

@@ -205,6 +205,7 @@ class ReservationController extends Controller
         // Update join_url from this reservation
         $reservation->join_url = $meetings->join_url;
         $reservation->save();
+
         return $reservation;
     }
 
