@@ -194,10 +194,11 @@ class ReservationController extends Controller
     public function createMeeting(Reservation $reservation)
     {
         // Membuat Meeting Baru
+        $timeInMinute = $reservation->end_time->diffInMinutes($reservation->start_time);
         $meetings = Zoom::user()->find(config('zoom.email'))->meetings()->create([
             'topic' => $reservation->title,
-            'duration' => 35, //in minutes
-            // 'type' => '2',
+            'duration' => $timeInMinute,
+            'type' => '2',
             'start_time' => $reservation->start_time,
             'timezone' => 'Asia/Jakarta',
         ]);

@@ -158,6 +158,7 @@ class ReservationTest extends TestCase
             'asset_id' => $this->asset->id,
             'asset_name' => $this->asset->name,
             'approval_status' => 'already_approved',
+            'join_url' => 'https://localhost:3000',
         ];
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
