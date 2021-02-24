@@ -30,18 +30,6 @@ class ReservationObserver
      */
     public function updated(Reservation $reservation)
     {
-        // $reservations = Reservation::where('asset_id', $reservation->asset_id)
-        //                     ->where('id', '!=', $reservation->id)
-        //                     // ->validateTime($reservation) //don't use in observer
-        //                     ->get();
-        // if ($reservation->has_already_approved && $reservations) {
-        //     $cc = $reservations->unique('email')->pluck('email');
-        //     $id = $reservations->pluck('id');
-        //     Reservation::whereIn('id', $id)->update(['approval_status' => ReservationStatusEnum::rejected()]);
-        //     //send rejection emails to users other than those already approved
-        //     Mail::to(Arr::first($cc))->cc($cc)->send(new ReservationApprovalMail($reservation));
-        // }
-        Mail::to($reservation->email)->send(new ReservationApprovalMail($reservation));
 
     }
 
