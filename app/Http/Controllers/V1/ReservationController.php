@@ -115,6 +115,7 @@ class ReservationController extends Controller
             'asset_description' => $asset->description,
             'user_id_updated' => $request->user()->uuid
         ]);
+        event(new ReservationEmail($reservation));
         return new ReservationResource($reservation);
     }
 
