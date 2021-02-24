@@ -45,8 +45,8 @@ class Reservation extends Model
     ];
 
     protected $casts = [
-        'start_time' => 'datetime:Y-m-d H:i',
-        'end_time' => 'datetime:Y-m-d H:i',
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     public function scopeByUser($query, $user)
