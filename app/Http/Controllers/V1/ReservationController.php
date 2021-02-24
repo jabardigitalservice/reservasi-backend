@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\V1;
 
 use App\Enums\ReservationStatusEnum;
-use App\Enums\ResourceTypeEnum;
 use App\Enums\UserRoleEnum;
-use App\Events\ZoomMeeting;
-use App\Events\ReservationEmail;
+use App\Events\AfterReservation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationRequest;
 use App\Http\Resources\ReservationResource;
@@ -16,7 +14,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Response as FacadesResponse;
 
 class ReservationController extends Controller
 {
@@ -85,12 +82,7 @@ class ReservationController extends Controller
                 'approval_status' => ReservationStatusEnum::already_approved(),
             ]);
 
-            // if this asset_id is zoom meeting, then
-            if ($asset->resource_type == ResourceTypeEnum::online()) {
-                event(new ZoomMeeting($reservation));
-            }
-
-            event(new ReservationEmail($reservation));
+            event(new AfterReservation($reservation, $asset));
 
             DB::commit();
         } catch (\Exception $th) {
@@ -116,7 +108,7 @@ class ReservationController extends Controller
             'asset_description' => $asset->description,
             'user_id_updated' => $request->user()->uuid
         ]);
-        event(new ReservationEmail($reservation));
+        event(new AfterReservation($reservation, $asset));
         return response()->json(null, Response::HTTP_CREATED);
     }
 

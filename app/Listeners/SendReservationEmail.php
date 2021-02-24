@@ -2,9 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\ReservationEmail;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Events\AfterReservation;
 use App\Mail\ReservationApprovalMail;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,13 +21,13 @@ class SendReservationEmail
     /**
      * Handle the event.
      *
-     * @param  ReservationEmail  $event
+     * @param AfterReservation  $event
      * @return void
      */
-    public function handle(ReservationEmail $reservationEvent)
+    public function handle(AfterReservation  $event)
     {
         try {
-            Mail::to($reservationEvent->reservation->email)->send(new ReservationApprovalMail($reservationEvent));
+            Mail::to($event->reservation->email)->send(new ReservationApprovalMail($event));
         } catch (\Exception $e) {
             return response()->json(["message" => $e->getMessage()]);
         }
