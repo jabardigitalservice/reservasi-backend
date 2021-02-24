@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
@@ -42,7 +43,7 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->get(route('reservation.index'));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testIndexReservationSearchTitle()
@@ -52,7 +53,7 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->get(route('reservation.index', ['search' => 'jabar']));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testIndexReservationPerPage()
@@ -62,7 +63,7 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->get(route('reservation.index', ['perPage' => 50]));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testIndexReservationFilterByAsset()
@@ -72,7 +73,7 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->get(route('reservation.index', ['asset_id' => 1]));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testIndexReservationFilterByApprovalStatus()
@@ -82,7 +83,7 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->get(route('reservation.index', ['approval_status' => 'already_approved']));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testIndexReservationFilterByStartDate()
@@ -92,7 +93,7 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->get(route('reservation.index', ['start_date' => '2021-01-27']));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testIndexReservationFilterByEndDate()
@@ -102,7 +103,7 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->get(route('reservation.index', ['end_date' => '2021-01-28']));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testIndexReservationSortedBy()
@@ -117,7 +118,7 @@ class ReservationTest extends TestCase
             'end_time' => '09:00',
         ]));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testShowReservation()
@@ -137,7 +138,7 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->get(route('reservation.show', $reservation->id));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testStoreReservation()
@@ -166,10 +167,7 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
         // 3. Verify and Assertion
-        $response->assertStatus(201);
-        $response->assertJson(['data' => [
-            'title' => $data['title'],
-        ]]);
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 
     public function testSendEmailReservation()
@@ -208,6 +206,6 @@ class ReservationTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($employee)->delete(route('reservation.destroy', $reservation->id));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 }
