@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Enums\ReservationStatusEnum;
 use App\Enums\ResourceTypeEnum;
 use App\Enums\UserRoleEnum;
+use App\Events\ZoomMeeting;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationRequest;
 use App\Http\Resources\ReservationResource;
@@ -88,7 +89,7 @@ class ReservationController extends Controller
 
             // if this asset_id is zoom meeting, then
             if ($asset->resource_type == ResourceTypeEnum::online()) {
-                $reservation = $this->createMeeting($reservation);
+                event(new ZoomMeeting($reservation));
             }
 
             Mail::to($request->user()->email)->send(new ReservationApprovalMail($reservation));
@@ -203,25 +204,6 @@ class ReservationController extends Controller
             $sortBy = 'created_at';
         }
         return $records->orderBy($sortBy, $orderBy);
-    }
-
-    public function createMeeting(Reservation $reservation)
-    {
-        // Membuat Meeting Baru
-        $timeInMinute = $reservation->end_time->diffInMinutes($reservation->start_time);
-        $meetings = Zoom::user()->find(config('zoom.email'))->meetings()->create([
-            'topic' => $reservation->title,
-            'duration' => $timeInMinute,
-            'type' => '2',
-            'start_time' => $reservation->start_time,
-            'timezone' => 'Asia/Jakarta',
-        ]);
-
-        // Update join_url from this reservation
-        $reservation->join_url = $meetings->join_url;
-        $reservation->save();
-
-        return $reservation;
     }
 
 }

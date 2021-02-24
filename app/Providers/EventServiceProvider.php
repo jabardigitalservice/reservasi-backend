@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Events\ZoomMeeting;
 use App\Models\Reservation;
 use App\Observers\ReservationObserver;
 use Illuminate\Auth\Events\Registered;
@@ -32,5 +33,11 @@ class EventServiceProvider extends ServiceProvider
         parent::boot();
 
         Reservation::observe(ReservationObserver::class);
+
+    }
+
+    public function shouldDiscoverEvents()
+    {
+        return true;
     }
 }
