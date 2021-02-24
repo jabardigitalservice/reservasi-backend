@@ -168,9 +168,6 @@ class ReservationTest extends TestCase
         $response = $this->actingAs($employee)->post(route('reservation.store'), $data);
         // 3. Verify and Assertion
         $response->assertStatus(Response::HTTP_CREATED);
-        $response->assertJson(['data' => [
-            'title' => $data['title'],
-        ]]);
     }
 
     public function testSendEmailReservation()
