@@ -26,7 +26,7 @@ class AddJoinUrlToReservationsTable extends Migration
     public function down()
     {
         Schema::table('reservations', function (Blueprint $table) {
-            //
+            $table->dropColumn('join_url');
         });
     }
 }
