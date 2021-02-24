@@ -14,10 +14,6 @@ use App\Models\Asset;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ReservationStoreMail;
-use App\Mail\ReservationApprovalMail;
-use \MacsiDigital\Zoom\Facades\Zoom;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
 
@@ -112,7 +108,7 @@ class ReservationController extends Controller
      */
     public function update(ReservationRequest $request, Reservation $reservation)
     {
-        abort_if($reservation->check_time_edit_valid, 500, __('validation.asset_modified_time'));
+        abort_if($reservation->check_time_edit_valid, Response::HTTP_INTERNAL_SERVER_ERROR, __('validation.asset_modified_time'));
         $asset = Asset::find($request->asset_id);
         $reservation->update($request->validated() + [
             'asset_name' => $asset->name,
@@ -206,5 +202,4 @@ class ReservationController extends Controller
         }
         return $records->orderBy($sortBy, $orderBy);
     }
-
 }
