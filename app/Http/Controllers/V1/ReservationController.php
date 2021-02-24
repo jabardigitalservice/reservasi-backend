@@ -14,7 +14,10 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationStoreMail;
+use App\Mail\ReservationApprovalMail;
 use \MacsiDigital\Zoom\Facades\Zoom;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Response;
 
 class ReservationController extends Controller
 {
@@ -69,21 +72,33 @@ class ReservationController extends Controller
     public function store(ReservationRequest $request)
     {
         $asset = Asset::find($request->asset_id);
-        $reservation = Reservation::create($request->validated() + [
-            'user_id_reservation' => $request->user()->uuid,
-            'user_fullname' => $request->user()->name,
-            'username' => $request->user()->username,
-            'email' => $request->user()->email,
-            'asset_name' => $asset->name,
-            'asset_description' => $asset->description,
-            'approval_status' => ReservationStatusEnum::already_approved(),
-        ]);
 
-        // if this asset_id is zoom meeting, then
-        if ($asset->resource_type == ResourceTypeEnum::online()) {
-            $reservation = $this->createMeeting($reservation);
+        try {
+            DB::beginTransaction();
+
+            $reservation = Reservation::create($request->validated() + [
+                'user_id_reservation' => $request->user()->uuid,
+                'user_fullname' => $request->user()->name,
+                'username' => $request->user()->username,
+                'email' => $request->user()->email,
+                'asset_name' => $asset->name,
+                'asset_description' => $asset->description,
+                'approval_status' => ReservationStatusEnum::already_approved(),
+            ]);
+
+            // if this asset_id is zoom meeting, then
+            if ($asset->resource_type == ResourceTypeEnum::online()) {
+                $reservation = $this->createMeeting($reservation);
+            }
+
+            Mail::to($request->user()->email)->send(new ReservationApprovalMail($reservation));
+
+            DB::commit();
+        } catch (\Exception $th) {
+            DB::rollback();
+            return response()->json(['message' => 'Terjadi kesalahan pada sistem.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        Mail::to(config('mail.admin_address'))->send(new ReservationStoreMail($reservation));
+
         return new ReservationResource($reservation);
     }
 
