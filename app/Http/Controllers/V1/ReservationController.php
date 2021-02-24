@@ -101,7 +101,6 @@ class ReservationController extends Controller
      */
     public function update(ReservationRequest $request, Reservation $reservation)
     {
-        abort_if($reservation->check_time_edit_valid, Response::HTTP_INTERNAL_SERVER_ERROR, __('validation.asset_modified_time'));
         $asset = Asset::find($request->asset_id);
         $reservation->update($request->validated() + [
             'asset_name' => $asset->name,
