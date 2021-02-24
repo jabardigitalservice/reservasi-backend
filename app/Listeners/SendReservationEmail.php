@@ -6,7 +6,6 @@ use App\Events\ReservationEmail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Mail\ReservationApprovalMail;
-use App\Models\Reservation;
 use Illuminate\Support\Facades\Mail;
 
 class SendReservationEmail
@@ -27,8 +26,12 @@ class SendReservationEmail
      * @param  ReservationEmail  $event
      * @return void
      */
-    public function handle(Reservation $reservation)
+    public function handle(ReservationEmail $reservationEvent)
     {
-        Mail::to(auth()->user()->email)->send(new ReservationApprovalMail($reservation));
+        try {
+            Mail::to($reservationEvent->reservation->email)->send(new ReservationApprovalMail($reservationEvent));
+        } catch (\Exception $e) {
+            return response()->json(["message" => $e->getMessage()]);
+        }
     }
 }

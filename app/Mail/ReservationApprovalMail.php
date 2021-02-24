@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Reservation;
 use App\Enums\ReservationStatusEnum;
+use App\Events\ReservationEmail;
 
 class ReservationApprovalMail extends Mailable
 {
@@ -15,16 +16,15 @@ class ReservationApprovalMail extends Mailable
     use SerializesModels;
 
     public $reservation;
-    public $status;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Reservation $reservation)
+    public function __construct(ReservationEmail $reservation)
     {
-        $this->reservation = $reservation;
+        $this->reservation = $reservation->reservation;
     }
 
     /**
@@ -37,7 +37,6 @@ class ReservationApprovalMail extends Mailable
         return $this->markdown('emails.reservationApproval')
                     ->subject('[Digiteam Reservasi Aset] Persetujuan Reservasi Aset')
                     ->with([
-                        'status' => $this->status,
                         'url' => config('app.web_url') . '/reservasi'
                     ]);
     }
