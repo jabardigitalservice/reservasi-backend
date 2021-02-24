@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class AssetTest extends TestCase
@@ -34,7 +35,7 @@ class AssetTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.index'));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -48,7 +49,7 @@ class AssetTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.index', ['perPage' => 50]));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -62,7 +63,7 @@ class AssetTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.index', ['name' => 'zoom']));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -76,7 +77,7 @@ class AssetTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.index', ['status' => 'active']));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -91,7 +92,7 @@ class AssetTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.show', $this->asset));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -114,10 +115,7 @@ class AssetTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->post(route('asset.store'), $data);
         // 3. Verify and Assertion
-        $response->assertStatus(201);
-        $response->assertJson(['data' => [
-            'status' => $data['status'],
-        ]]);
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 
     /**
@@ -132,10 +130,7 @@ class AssetTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->delete(route('asset.destroy', $this->asset));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
-        $response->assertJson([
-            'message' => 'Asset record deleted.',
-        ]);
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -150,6 +145,6 @@ class AssetTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->get(route('asset.list'));
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 }

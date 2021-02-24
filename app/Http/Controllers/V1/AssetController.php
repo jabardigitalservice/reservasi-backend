@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAssetRequest;
 use App\Http\Resources\AssetResource;
 use App\Models\Asset;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class AssetController extends Controller
 {
@@ -66,7 +67,7 @@ class AssetController extends Controller
     {
         $result = Asset::create($request->validated());
 
-        return new AssetResource($result);
+        return response()->json(null, Response::HTTP_CREATED);
     }
 
     /**
@@ -80,7 +81,7 @@ class AssetController extends Controller
     {
         $asset->update($request->validated());
 
-        return new AssetResource($asset);
+        response()->json(null, Response::HTTP_CREATED);
     }
 
     /**
@@ -94,7 +95,7 @@ class AssetController extends Controller
     {
         $asset->delete();
 
-        return response()->json(['message' => 'Asset record deleted.'], 200);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**

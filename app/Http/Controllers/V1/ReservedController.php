@@ -9,6 +9,7 @@ use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ReservedController extends Controller
 {
@@ -59,6 +60,6 @@ class ReservedController extends Controller
         $reservation->update($request->validated() + [
             'approval_date' => Carbon::now(),
         ]);
-        return new ReservationResource($reservation);
+        return response()->json(null, Response::HTTP_CREATED);
     }
 }

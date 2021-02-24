@@ -23,11 +23,13 @@ class Reservation extends Model
         'asset_id',
         'asset_name',
         'asset_description',
+        'asset_resource_type',
         'approval_status',
         'note',
         'date',
         'start_time',
         'end_time',
+        'join_url',
         'user_id_updated',
         'approval_date'
     ];

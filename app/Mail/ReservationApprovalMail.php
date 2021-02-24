@@ -6,8 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Reservation;
-use App\Enums\ReservationStatusEnum;
+use App\Events\AfterReservation;
 
 class ReservationApprovalMail extends Mailable
 {
@@ -15,21 +14,16 @@ class ReservationApprovalMail extends Mailable
     use SerializesModels;
 
     public $reservation;
-    public $status;
-
+    public $user;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Reservation $reservation)
+    public function __construct(AfterReservation $event, $user)
     {
-        $this->reservation = $reservation;
-
-        $this->status = 'Ditolak';
-        if ($reservation->approval_status == ReservationStatusEnum::already_approved()) {
-            $this->status = 'Disetujui';
-        }
+        $this->reservation = $event->reservation;
+        $this->user = $user;
     }
 
     /**
@@ -42,7 +36,7 @@ class ReservationApprovalMail extends Mailable
         return $this->markdown('emails.reservationApproval')
                     ->subject('[Digiteam Reservasi Aset] Persetujuan Reservasi Aset')
                     ->with([
-                        'status' => $this->status,
+                        'hostkey' => $this->user->host_key,
                         'url' => config('app.web_url') . '/reservasi'
                     ]);
     }

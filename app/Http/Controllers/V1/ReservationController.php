@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Enums\ReservationStatusEnum;
 use App\Enums\UserRoleEnum;
+use App\Events\AfterReservation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationRequest;
 use App\Http\Resources\ReservationResource;
@@ -11,8 +12,8 @@ use App\Models\Asset;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ReservationStoreMail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Response;
 
 class ReservationController extends Controller
 {
@@ -67,16 +68,29 @@ class ReservationController extends Controller
     public function store(ReservationRequest $request)
     {
         $asset = Asset::find($request->asset_id);
-        $reservation = Reservation::create($request->validated() + [
-            'user_id_reservation' => $request->user()->uuid,
-            'user_fullname' => $request->user()->name,
-            'username' => $request->user()->username,
-            'email' => $request->user()->email,
-            'asset_name' => $asset->name,
-            'asset_description' => $asset->description,
-            'approval_status' => ReservationStatusEnum::already_approved(),
-        ]);
-        return new ReservationResource($reservation);
+
+        try {
+            DB::beginTransaction();
+
+            $reservation = Reservation::create($request->validated() + [
+                'user_id_reservation' => $request->user()->uuid,
+                'user_fullname' => $request->user()->name,
+                'username' => $request->user()->username,
+                'email' => $request->user()->email,
+                'asset_name' => $asset->name,
+                'asset_description' => $asset->description,
+                'approval_status' => ReservationStatusEnum::already_approved(),
+            ]);
+
+            event(new AfterReservation($reservation, $asset));
+
+            DB::commit();
+        } catch (\Exception $th) {
+            DB::rollback();
+            return response()->json(['message' => 'internal_server_error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json(null, Response::HTTP_CREATED);
     }
 
     /**
@@ -87,14 +101,15 @@ class ReservationController extends Controller
      */
     public function update(ReservationRequest $request, Reservation $reservation)
     {
-        abort_if($reservation->check_time_edit_valid, 500, __('validation.asset_modified_time'));
+        abort_if($reservation->check_time_edit_valid, Response::HTTP_INTERNAL_SERVER_ERROR, __('validation.asset_modified_time'));
         $asset = Asset::find($request->asset_id);
         $reservation->update($request->validated() + [
             'asset_name' => $asset->name,
             'asset_description' => $asset->description,
             'user_id_updated' => $request->user()->uuid
         ]);
-        return new ReservationResource($reservation);
+        event(new AfterReservation($reservation, $asset));
+        return response()->json(null, Response::HTTP_CREATED);
     }
 
     /**
@@ -106,7 +121,7 @@ class ReservationController extends Controller
     public function destroy(Reservation $reservation)
     {
         $reservation->delete();
-        return response()->json(['message' => 'Reservation record deleted.']);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**

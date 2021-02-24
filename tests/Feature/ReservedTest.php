@@ -7,6 +7,7 @@ use App\Models\Reservation;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -57,7 +58,7 @@ class ReservedTest extends TestCase
         $response = $this->actingAs($admin)->json('GET', config('app.url') . '/api/reserved', $data);
 
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testUpdateReserved()
@@ -85,6 +86,6 @@ class ReservedTest extends TestCase
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->put(route('reserved.update', $reservation), $data);
         // 3. Verify and Assertion
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 }
