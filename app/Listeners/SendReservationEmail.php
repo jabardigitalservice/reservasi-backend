@@ -29,10 +29,8 @@ class SendReservationEmail
     {
         try {
             $user = Zoom::user()->find(config('zoom.email'));
-            // $event->reservation->email
-            Mail::to("muhamad.rizky1996@gmail.com")->send(new ReservationApprovalMail($event, $user));
+            Mail::to($event->reservation->email)->send(new ReservationApprovalMail($event, $user));
         } catch (\Exception $e) {
-            dd($e);
             return response()->json(["message" => $e]);
         }
     }
