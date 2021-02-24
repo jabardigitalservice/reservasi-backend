@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Response as FacadesResponse;
 
 class ReservationController extends Controller
 {
@@ -94,10 +95,10 @@ class ReservationController extends Controller
             DB::commit();
         } catch (\Exception $th) {
             DB::rollback();
-            return response()->json(['message' => 'Terjadi kesalahan pada sistem.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'internal_server_error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new ReservationResource($reservation);
+        return response()->json(null, Response::HTTP_CREATED);
     }
 
     /**
@@ -116,7 +117,7 @@ class ReservationController extends Controller
             'user_id_updated' => $request->user()->uuid
         ]);
         event(new ReservationEmail($reservation));
-        return new ReservationResource($reservation);
+        return response()->json(null, Response::HTTP_CREATED);
     }
 
     /**
@@ -128,7 +129,7 @@ class ReservationController extends Controller
     public function destroy(Reservation $reservation)
     {
         $reservation->delete();
-        return response()->json(['message' => 'Reservation record deleted.']);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
