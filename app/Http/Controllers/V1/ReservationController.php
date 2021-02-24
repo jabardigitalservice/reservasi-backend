@@ -6,6 +6,7 @@ use App\Enums\ReservationStatusEnum;
 use App\Enums\ResourceTypeEnum;
 use App\Enums\UserRoleEnum;
 use App\Events\ZoomMeeting;
+use App\Events\ReservationEmail;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationRequest;
 use App\Http\Resources\ReservationResource;
@@ -92,7 +93,7 @@ class ReservationController extends Controller
                 event(new ZoomMeeting($reservation));
             }
 
-            Mail::to($request->user()->email)->send(new ReservationApprovalMail($reservation));
+            event(new ReservationEmail($reservation));
 
             DB::commit();
         } catch (\Exception $th) {

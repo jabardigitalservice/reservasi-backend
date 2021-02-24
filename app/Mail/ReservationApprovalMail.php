@@ -25,11 +25,6 @@ class ReservationApprovalMail extends Mailable
     public function __construct(Reservation $reservation)
     {
         $this->reservation = $reservation;
-
-        $this->status = 'Ditolak';
-        if ($reservation->approval_status == ReservationStatusEnum::already_approved()) {
-            $this->status = 'Disetujui';
-        }
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\ZoomMeeting;
+use App\Listeners\SendReservationEmail;
 use App\Models\Reservation;
 use App\Observers\ReservationObserver;
 use Illuminate\Auth\Events\Registered;
@@ -36,6 +37,11 @@ class EventServiceProvider extends ServiceProvider
 
     }
 
+    /**
+     * Determine if events and listeners should be automatically discovered.
+     *
+     * @return bool
+     */
     public function shouldDiscoverEvents()
     {
         return true;
