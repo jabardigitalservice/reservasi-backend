@@ -101,6 +101,9 @@ class ReservationController extends Controller
      */
     public function update(ReservationRequest $request, Reservation $reservation)
     {
+        if (!$reservation->getCheckTimeEditValidAttribute()) {
+            return response()->json(["message" => 'time is invalid'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
         $asset = Asset::find($request->asset_id);
         $reservation->update($request->validated() + [
             'asset_name' => $asset->name,
