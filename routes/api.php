@@ -19,6 +19,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('user', 'Settings\ProfileController@index')->name('user.get');
     Route::group(['namespace' => 'V1'], function () {
         Route::get('asset/list', 'ActiveListAssetController@index')->name('asset.list');
+        Route::get('reservation/list', 'ReservationListAllController')->name('reservation.list');
         Route::apiResource('asset', 'AssetController');
         Route::apiResource('reservation', 'ReservationController');
         Route::apiResource('reserved', 'ReservedController')
