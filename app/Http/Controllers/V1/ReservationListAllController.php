@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
+use Illuminate\Http\Request;
 
 class ReservationListAllController extends Controller
 {
@@ -14,8 +15,15 @@ class ReservationListAllController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke()
+    public function __invoke(Request $request)
     {
-        return ReservationResource::collection(Reservation::all());
+        $month = $request->input('month', date('m'));
+        $year = $request->input('year', date('Y'));
+
+        $records = Reservation::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get();
+
+        return ReservationResource::collection($records);
     }
 }
