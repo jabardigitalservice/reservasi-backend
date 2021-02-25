@@ -41,8 +41,6 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'log'),
-
     'mailers' => [
         'smtp' => [
             'transport' => 'smtp',
