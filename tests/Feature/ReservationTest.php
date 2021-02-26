@@ -209,4 +209,14 @@ class ReservationTest extends TestCase
         // 3. Verify and Assertion
         $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
+
+    public function testListAllReservation()
+    {
+        // 1. Mocking data
+        $employee = $this->employee;
+        // 2. Hit Api Endpoint
+        $response = $this->actingAs($employee)->get(route('reservation.list'));
+        // 3. Verify and Assertion
+        $response->assertStatus(Response::HTTP_OK);
+    }
 }
