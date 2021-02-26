@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\AssetStatusEnum;
+use App\Enums\ResourceTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Spatie\Enum\Laravel\Rules\EnumValueRule;
 
@@ -28,7 +29,8 @@ class StoreAssetRequest extends FormRequest
         return [
             'name' => 'required|unique:assets,name,NULL,id,deleted_at,NULL',
             'status' => ['required', new EnumValueRule(AssetStatusEnum::class)],
-            'capacity' => 'required|numeric'
+            'capacity' => 'required|numeric',
+            'resource_type' => ['required', new EnumValueRule(ResourceTypeEnum::class)]
         ];
     }
 }
