@@ -80,7 +80,6 @@ class ReservationController extends Controller
                 'asset_name' => $asset->name,
                 'asset_description' => $asset->description,
                 'approval_status' => ReservationStatusEnum::already_approved(),
-                'description' => $request->description
             ]);
 
             event(new AfterReservation($reservation, $asset));
