@@ -109,11 +109,13 @@ class AssetTest extends TestCase
             'name' => 'Jabar Command Center',
             'status' => 'active',
             'description' => 'JDS Team',
-            'capacity' => 100
+            'capacity' => 100,
+            'resource_type' => 'online'
         ];
 
         // 2. Hit Api Endpoint
         $response = $this->actingAs($admin)->post(route('asset.store'), $data);
+
         // 3. Verify and Assertion
         $response->assertStatus(Response::HTTP_CREATED);
     }
