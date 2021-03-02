@@ -30,7 +30,8 @@ class StoreAssetRequest extends FormRequest
             'name' => 'required|unique:assets,name,NULL,id,deleted_at,NULL',
             'status' => ['required', new EnumValueRule(AssetStatusEnum::class)],
             'capacity' => 'required|numeric',
-            'resource_type' => ['required', new EnumValueRule(ResourceTypeEnum::class)]
+            'resource_type' => ['required', new EnumValueRule(ResourceTypeEnum::class)],
+            'description' => 'nullable'
         ];
     }
 }
