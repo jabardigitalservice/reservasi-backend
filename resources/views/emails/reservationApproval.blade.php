@@ -3,7 +3,7 @@
 
 Terima kasih Anda sudah melakukan reservasi pada Aplikasi Digiteam Reservasi Aset.
 Melalui surat elektronik ini, berdasarkan data reservasi yang kami terima yaitu:
-- Nama : {{ $reservation->user_full_name }}
+- Nama : {{ $reservation->user_fullname }}
 - Judul Kegiatan: {{ $reservation->title }}
 - Catatan Kegiatan: {{ $reservation->description }}
 - Nama Ruangan : {{ $reservation->asset_name }}
