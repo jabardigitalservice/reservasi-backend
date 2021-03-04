@@ -32,6 +32,7 @@ class EditAssetRequest extends FormRequest
             'status' => ['required', new EnumRule(AssetStatusEnum::class)],
             'capacity' => 'required|numeric',
             'resource_type' => ['required', new EnumValueRule(ResourceTypeEnum::class)],
+            'description' => 'nullable'
         ];
     }
 }
