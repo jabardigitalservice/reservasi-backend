@@ -31,7 +31,7 @@ class CreateZoomMeeting
         if ($asset->resource_type == ResourceTypeEnum::online()) {
             // Membuat Meeting Baru
             $timeInMinute = $reservation->end_time->diffInMinutes($reservation->start_time);
-            $meetings = Zoom::user()->find(config('zoom.email'))->meetings()->create([
+            $meetings = Zoom::user()->find($asset->zoom_email)->meetings()->create([
                 'topic' => $reservation->title,
                 'duration' => $timeInMinute,
                 'type' => '2',
