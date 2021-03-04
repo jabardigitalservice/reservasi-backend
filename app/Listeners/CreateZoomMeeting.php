@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Events\AfterReservation;
 use App\Enums\ResourceTypeEnum;
-use MacsiDigital\Zoom\Facades\Zoom;
+use \MacsiDigital\Zoom\Facades\Zoom;
 
 class CreateZoomMeeting
 {
