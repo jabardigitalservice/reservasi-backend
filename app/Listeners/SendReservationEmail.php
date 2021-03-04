@@ -5,7 +5,7 @@ namespace App\Listeners;
 use App\Events\AfterReservation;
 use App\Mail\ReservationApprovalMail;
 use Illuminate\Support\Facades\Mail;
-use \MacsiDigital\Zoom\Facades\Zoom;
+use MacsiDigital\Zoom\Facades\Zoom;
 
 class SendReservationEmail
 {
@@ -25,10 +25,10 @@ class SendReservationEmail
      * @param AfterReservation  $event
      * @return void
      */
-    public function handle(AfterReservation  $event)
+    public function handle(AfterReservation $event)
     {
         try {
-            $user = Zoom::user()->find(config('zoom.email'));
+            $user = Zoom::user()->find($event->asset->zoom_email);
             Mail::to($event->reservation->email)->send(new ReservationApprovalMail($event, $user));
         } catch (\Exception $e) {
             return response()->json(["message" => $e]);
