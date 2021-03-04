@@ -13,7 +13,7 @@ class ReservationPolicy
 
     public function before(User $user, $ability)
     {
-        $actions = ['update', 'view', 'viewAny'];
+        $actions = ['create', 'update', 'view', 'viewAny'];
         if (
             $user->hasRole(UserRoleEnum::admin_reservasi()) &&
             in_array($ability, $actions)
