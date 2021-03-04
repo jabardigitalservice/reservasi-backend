@@ -25,7 +25,6 @@ class ReservationController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('can:isEmployee')->only(['store', 'update']);
         $this->authorizeResource(Reservation::class);
     }
     /**
