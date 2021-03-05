@@ -11,6 +11,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        \DB::table('assets')->delete();
+        \DB::table('users')->delete();
+
+        $this->call([
+            AssetSeeder::class,
+            UserSeeder::class
+        ]);
     }
 }

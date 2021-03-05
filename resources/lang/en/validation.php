@@ -117,7 +117,10 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
-
+    'asset_reserved' => 'The :attribute has been reserved',
+    'asset_modified' => 'Reservation data can be edited if the status has not been approved',
+    'asset_modified_time' => 'reservation data may not be edited
+        if the current time is less than 30 minutes from the promised time',
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines

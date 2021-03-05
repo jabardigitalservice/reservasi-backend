@@ -9,18 +9,23 @@
     "license": "MIT",
     "require": {
         "php": "^7.2.5",
+        "doctrine/dbal": "2.12.1",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^1.0",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^7.0",
-        "laravel/tinker": "^2.0"
+        "laravel/tinker": "^2.0",
+        "macsidigital/laravel-zoom": "^4.1",
+        "sentry/sentry-laravel": "^2.3",
+        "spatie/laravel-enum": "^1.6"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
         "fzaninotto/faker": "^1.9.1",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^4.1",
-        "phpunit/phpunit": "^8.5"
+        "phpunit/phpunit": "^8.5",
+        "squizlabs/php_codesniffer": "3.*"
     },
     "config": {
         "optimize-autoloader": true,
@@ -34,7 +39,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "KeycloakGuard\\": "packages/robsontenorio/laravel-keycloak-guard/src"
         },
         "classmap": [
             "database/seeds",
@@ -58,6 +64,15 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "test": [
+            "XDEBUG_MODE=coverage vendor/bin/phpunit"
+        ],
+        "phpcs": [
+          "vendor/bin/phpcs"
+        ],
+        "phpcbf": [
+          "vendor/bin/phpcbf"
         ]
     }
 }

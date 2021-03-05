@@ -2,9 +2,11 @@
 
 namespace App;
 
+use App\Enums\UserRoleEnum;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -36,4 +38,25 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function hasRole($roleName): bool
+    {
+        return $this->role == $roleName;
+    }
+
+    public function hasPermission($permissionName): bool
+    {
+        $permissions = $this->getAttribute('permissions');
+
+        if ($permissions == null) {
+            return false;
+        }
+
+        return in_array($permissionName, $permissions);
+    }
+
+    public function assignPermissions(array $permissions)
+    {
+        $this->setAttribute('permissions', $permissions);
+    }
 }
