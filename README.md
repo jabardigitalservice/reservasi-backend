@@ -57,10 +57,9 @@ $ ./vendor/bin/phpcs
 $ ./vendor/bin/phpunit
 ```
 
-## Bagaimana cara deployment ke server?
-Proses deployment menggunakan CI/CD AWS CodePipeline, CodeBuild, dan AWS Elastic Container Service (ECS).
-
 ## Kontributor
 - Rindi Budiaramdhan
 - Firman Alamsyah
-- Rachardian Novansyah
+- Rachadian Novansyah
+- Yonathan Setiadi
+- Muhammad Rizky
