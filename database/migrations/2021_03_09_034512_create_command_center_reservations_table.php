@@ -22,7 +22,7 @@ class CreateCommandCenterReservationsTable extends Migration
             $table->string('organization')->nullable();
             $table->string('organization_address')->nullable();
             $table->string('phone_number')->index();
-            $table->integer('email')->unique()->index();
+            $table->string('email')->unique()->index();
             $table->string('purpose');
             $table->integer('participant');
             $table->dateTime('reservation_date')->index();
