@@ -23,9 +23,10 @@ class CommandCenterReservation extends Model
         'email',
         'purpose',
         'participant',
-        'date',
+        'reservation_date',
         'shift',
         'approval_status',
+        'notes',
         'approval_date',
         'user_id_updated',
         'user_id_deleted'
