@@ -22,7 +22,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('reservation/list', 'ReservationListAllController')->name('reservation.list');
         Route::apiResource('asset', 'AssetController');
         Route::apiResource('reservation', 'ReservationController');
-        Route::apiResource('command_center_reservation', 'CommandCenterReservationController');
+        Route::apiResource('command-center-reservation', 'CommandCenterReservationController');
         Route::apiResource('reserved', 'ReservedController')
             ->only(['index', 'update'])
             ->parameters([
