@@ -18,15 +18,15 @@ class CreateCommandCenterReservationsTable extends Migration
             $table->uuid('user_id_reservation');
             $table->string('reservation_code')->index();
             $table->string('name')->index();
-            $table->integer('nik')->unique();
-            $table->string('organization')->nullable();
-            $table->string('organization_address')->nullable();
+            $table->string('nik')->unique();
+            $table->string('organization_name')->nullable();
+            $table->string('address')->nullable();
             $table->string('phone_number')->index();
             $table->string('email')->unique()->index();
             $table->string('purpose');
-            $table->integer('participant');
+            $table->integer('visitors');
             $table->dateTime('reservation_date')->index();
-            $table->enum('shift', ['shift_1', 'shift_2']);
+            $table->enum('shift', ['1', '2']);
             $table->enum('approval_status', ['not_yet_approved', 'already_approved', 'rejected'])
                 ->default('not_yet_approved');
             $table->dateTime('approval_date')

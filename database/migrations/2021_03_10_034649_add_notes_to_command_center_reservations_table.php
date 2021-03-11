@@ -14,7 +14,7 @@ class AddNotesToCommandCenterReservationsTable extends Migration
     public function up()
     {
         Schema::table('command_center_reservations', function (Blueprint $table) {
-            $table->text('notes')->after('approval_status')->nullable();
+            $table->text('note')->after('approval_status')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddNotesToCommandCenterReservationsTable extends Migration
     public function down()
     {
         Schema::table('command_center_reservations', function (Blueprint $table) {
-            $table->dropColumn('notes');
+            $table->dropColumn('note');
         });
     }
 }
