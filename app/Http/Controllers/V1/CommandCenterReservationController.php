@@ -18,9 +18,13 @@ class CommandCenterReservationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $records = CommandCenterReservation::query();
+        $perPage = $request->input('perPage', 10);
+        $perPage = $this->getPaginationSize($perPage);
+
+        return CCReservationResource::collection($records->paginate($perPage));
     }
 
     /**
@@ -81,6 +85,23 @@ class CommandCenterReservationController extends Controller
      */
     public function destroy(CommandCenterReservation $commandCenterReservation)
     {
-        //
+        $commandCenterReservation->delete();
+    }
+
+    /**
+     * Function to pagination
+     * @author SedekahCode
+     * @since Januari 2021
+     * @param Array $perPage
+     * @return void
+     */
+    protected function getPaginationSize($perPage)
+    {
+        $perPageAllowed = [50, 100, 500];
+
+        if (in_array($perPage, $perPageAllowed)) {
+            return $perPage;
+        }
+        return 10;
     }
 }
