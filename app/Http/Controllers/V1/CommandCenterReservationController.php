@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CommandCenterReservationRequest;
 use App\Models\CommandCenterReservation;
 use App\Enums\CommandCenterReservationStatusEnum;
+use App\Http\Resources\CCReservationResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
@@ -55,7 +56,7 @@ class CommandCenterReservationController extends Controller
      */
     public function show(CommandCenterReservation $commandCenterReservation)
     {
-        //
+        return new CCReservationResource($commandCenterReservation);
     }
 
     /**
@@ -67,7 +68,9 @@ class CommandCenterReservationController extends Controller
      */
     public function update(Request $request, CommandCenterReservation $commandCenterReservation)
     {
-        //
+        $commandCenterReservation->update($request->validated());
+
+        return new CCReservationResource($commandCenterReservation);
     }
 
     /**

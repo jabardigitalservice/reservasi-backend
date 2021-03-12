@@ -14,7 +14,7 @@ class CommandCenterReservation extends Model
     use HasEnums;
 
     protected $fillable = [
-        'user_id_resercation',
+        'user_id_reservation',
         'name',
         'reservation_code',
         'nik',
@@ -27,7 +27,7 @@ class CommandCenterReservation extends Model
         'reservation_date',
         'shift',
         'approval_status',
-        'notes',
+        'note',
         'approval_date',
         'user_id_updated',
         'user_id_deleted'
